@@ -1,6 +1,16 @@
 import 'package:flutter/material.dart';
-import '../../parking/screens/main_navigation_screen.dart';
-import 'signup_screen.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart'; 
+import 'package:google_sign_in/google_sign_in.dart'; 
+import 'package:provider/provider.dart'; 
+
+// ⚠️ 본인의 폴더 구조에 맞게 경로 확인 필수!
+import 'signup_screen.dart'; 
+import '../../parking/screens/main_navigation_screen.dart'; 
+import '../../../core/shared_data.dart'; 
+import '../providers/user_provider.dart'; 
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -10,9 +20,10 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  bool _isPasswordVisible = false;
+  bool _isAutoLoginChecked = false; 
 
   @override
   void dispose() {
@@ -21,150 +32,303 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 
+  // ------------------------------------------------------------------------
+  // ✅ 1. 이메일 (일반) 로그인
+  // ------------------------------------------------------------------------
+  Future<void> _handleLogin() async {
+    if (_emailController.text.isEmpty || _passwordController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('⚠️ 이메일과 비밀번호를 모두 입력해주세요.')));
+      return;
+    }
+
+    // 로딩창 띄우기
+    showDialog(context: context, barrierDismissible: false, builder: (context) => const Center(child: CircularProgressIndicator()));
+
+    try {
+      final url = Uri.parse('http://10.0.2.2:3000/api/login');
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'email': _emailController.text.trim(),
+          'password': _passwordController.text.trim(),
+        }),
+      );
+
+      if (!mounted) return;
+      // 🔥 팀킬 방지: 앱 화면이 아닌 팝업(Loading)만 정확히 닫기!
+      Navigator.of(context, rootNavigator: true).pop();
+
+      final result = jsonDecode(response.body);
+      
+      // 로그인 성공 시!
+      if (response.statusCode == 200 && result['success'] == true) {
+        final userData = result['user'];
+        final dbVehicle = userData['registeredVehicle'] ?? "등록된 차량 없음";
+        
+        final userName = userData['name'] ?? "사용자";
+        final userEmail = userData['email'] ?? _emailController.text.trim();
+        final userDept = userData['department'] ?? ""; // 소속은 빈칸으로
+
+        SharedData.vehicleNumber.value = dbVehicle;
+
+        // Provider에 실시간 프로필 정보 세팅
+        Provider.of<UserProvider>(context, listen: false).setUser(
+          name: userName,
+          email: userEmail,
+          department: userDept,
+        );
+
+        final prefs = await SharedPreferences.getInstance();
+        if (_isAutoLoginChecked) {
+          await prefs.setBool('isLoggedIn', true);
+          await prefs.setString('registeredVehicle', dbVehicle);
+          await prefs.setString('userName', userName);
+          await prefs.setString('userEmail', userEmail);
+          await prefs.setString('userDept', userDept);
+        } else {
+          await prefs.setBool('isLoggedIn', false);
+          await prefs.remove('registeredVehicle');
+          await prefs.remove('userName');
+          await prefs.remove('userEmail');
+          await prefs.remove('userDept');
+        }
+
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const MainNavigationScreen()));
+      } else {
+        // 실패 (비밀번호 틀림 등)
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('❌ 실패: ${result['message']}'), backgroundColor: Colors.redAccent));
+      }
+    } catch (e) {
+      if (!mounted) return;
+      // 🔥 에러 시에도 팝업만 정확히 닫기!
+      Navigator.of(context, rootNavigator: true).pop();
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('⚠️ 서버 접속 실패. 서버 상태를 확인해주세요.')));
+    }
+  }
+
+  // ------------------------------------------------------------------------
+  // ✅ 2. 구글 연동 로그인
+  // ------------------------------------------------------------------------
+  Future<void> _handleGoogleLogin() async {
+    try {
+      final GoogleSignIn googleSignIn = GoogleSignIn();
+      await googleSignIn.signOut(); // 계정 선택 창 강제 호출
+      final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
+      
+      if (googleUser == null) return; 
+
+      if (!mounted) return;
+      // 로딩창 띄우기
+      showDialog(context: context, barrierDismissible: false, builder: (context) => const Center(child: CircularProgressIndicator()));
+
+      final url = Uri.parse('http://10.0.2.2:3000/api/google-login');
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'email': googleUser.email,
+          'name': googleUser.displayName ?? '구글 유저',
+          'uid': googleUser.id,
+        }),
+      );
+
+      if (!mounted) return;
+      // 🔥 팀킬 방지: 앱 화면이 아닌 팝업(Loading)만 정확히 닫기!
+      Navigator.of(context, rootNavigator: true).pop();
+
+      final result = jsonDecode(response.body);
+      
+      // 서버 통신 성공 시!
+      if (response.statusCode == 200 && result['success'] == true) {
+        final userData = result['user'];
+        final dbVehicle = userData['registeredVehicle'] ?? "등록된 차량 없음";
+        
+        final userName = userData['name'] ?? googleUser.displayName ?? "구글 유저";
+        final userEmail = userData['email'] ?? googleUser.email;
+        final userDept = userData['department'] ?? "";
+
+        SharedData.vehicleNumber.value = dbVehicle;
+
+        Provider.of<UserProvider>(context, listen: false).setUser(
+          name: userName,
+          email: userEmail,
+          department: userDept,
+        );
+
+        final prefs = await SharedPreferences.getInstance();
+        if (_isAutoLoginChecked) {
+          await prefs.setBool('isLoggedIn', true);
+          await prefs.setString('registeredVehicle', dbVehicle);
+          await prefs.setString('userName', userName);
+          await prefs.setString('userEmail', userEmail);
+          await prefs.setString('userDept', userDept);
+        } else {
+          await prefs.setBool('isLoggedIn', false);
+          await prefs.remove('registeredVehicle');
+          await prefs.remove('userName');
+          await prefs.remove('userEmail');
+          await prefs.remove('userDept');
+        }
+
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const MainNavigationScreen()));
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('❌ 구글 로그인 실패: ${result['message']}')));
+      }
+    } catch (e) {
+      if (!mounted) return;
+      // 🔥 에러 시에도 팝업만 정확히 닫기!
+      Navigator.of(context, rootNavigator: true).pop();
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('⚠️ 구글 로그인 에러 (서버 연결을 확인하세요)')));
+    }
+  }
+
+  Future<void> _launchSocialLoginUrl(String provider) async {
+    String urlString = '';
+    switch (provider) {
+      case '카카오톡': urlString = 'https://accounts.kakao.com/login'; break;
+      case '애플': urlString = 'https://appleid.apple.com/sign-in'; break;
+    }
+    final Uri url = Uri.parse(urlString);
+    try {
+      await launchUrl(url, mode: LaunchMode.inAppWebView);
+    } catch (e) {
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('⚠️ $provider 열기 실패')));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     final primaryColor = Theme.of(context).primaryColor;
 
     return Scaffold(
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 40.0),
-          child: Form(
-            key: _formKey,
+        child: Center(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(horizontal: 32.0),
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const SizedBox(height: 40),
-                // 상단 타이틀
-                Center(
-                  child: Column(
-                    children: [
-                      Text(
-                        'Au-Park',
-                        style: TextStyle(
-                          fontSize: 36,
-                          fontWeight: FontWeight.w800,
-                          color: primaryColor,
-                          letterSpacing: 1.5,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        '안산대학교 스마트 주차 시스템',
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: isDarkMode ? Colors.grey.shade400 : Colors.grey.shade600,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 60),
+                Icon(Icons.local_parking, size: 80, color: primaryColor),
+                const SizedBox(height: 16),
+                const Text('Au-Park', textAlign: TextAlign.center, style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, letterSpacing: 1.5)),
+                const SizedBox(height: 8),
+                const Text('스마트 주차의 새로운 시작', textAlign: TextAlign.center, style: TextStyle(fontSize: 16, color: Colors.grey)),
+                const SizedBox(height: 48),
 
-                // 이메일 입력창
-                TextFormField(
+                TextField(
                   controller: _emailController,
                   keyboardType: TextInputType.emailAddress,
                   decoration: InputDecoration(
-                    labelText: '이메일',
-                    hintText: 'example@ansan.ac.kr',
-                    prefixIcon: Icon(Icons.email_outlined, color: primaryColor),
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                    floatingLabelStyle: TextStyle(color: primaryColor),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(color: primaryColor, width: 2),
-                    ),
+                    labelText: '이메일', prefixIcon: const Icon(Icons.email_outlined),
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
+                    filled: true, fillColor: Theme.of(context).cardColor,
                   ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) return '이메일을 입력해 주세요.';
-                    if (!value.contains('@ansan.ac.kr')) return '안산대학교 계정(@ansan.ac.kr)이어야 합니다.';
-                    return null;
-                  },
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 16),
 
-                // 비밀번호 입력창
-                TextFormField(
+                TextField(
                   controller: _passwordController,
-                  obscureText: true,
+                  obscureText: !_isPasswordVisible,
                   decoration: InputDecoration(
-                    labelText: '비밀번호',
-                    prefixIcon: Icon(Icons.lock_outline, color: primaryColor),
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                    floatingLabelStyle: TextStyle(color: primaryColor),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(color: primaryColor, width: 2),
+                    labelText: '비밀번호', prefixIcon: const Icon(Icons.lock_outline),
+                    suffixIcon: IconButton(
+                      icon: Icon(_isPasswordVisible ? Icons.visibility : Icons.visibility_off, color: Colors.grey),
+                      onPressed: () => setState(() => _isPasswordVisible = !_isPasswordVisible),
                     ),
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
+                    filled: true, fillColor: Theme.of(context).cardColor,
                   ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) return '비밀번호를 입력해 주세요.';
-                    if (value.length < 6) return '비밀번호는 6자리 이상이어야 합니다.';
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 40),
-
-                // 찐 로그인 버튼
-                ElevatedButton(
-                  onPressed: () {
-                    if (_formKey.currentState!.validate()) {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(builder: (context) => const MainNavigationScreen()),
-                      );
-                    }
-                  },
-                  style: ElevatedButton.styleFrom(
-                    minimumSize: const Size(double.infinity, 56),
-                    backgroundColor: primaryColor,
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                    elevation: 0,
-                  ),
-                  child: const Text('로그인', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                 ),
                 const SizedBox(height: 12),
 
-                // 🚀 개발용 하이패스(테스트) 버튼
-                OutlinedButton(
-                  onPressed: () {
-                    // 유효성 검사 무시하고 무조건 냅다 메인 화면으로 이동!
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(builder: (context) => const MainNavigationScreen()),
-                    );
-                  },
-                  style: OutlinedButton.styleFrom(
-                    minimumSize: const Size(double.infinity, 56),
-                    foregroundColor: primaryColor,
-                    side: BorderSide(color: primaryColor, width: 2),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                  ),
-                  child: const Text('개발용 하이패스 (바로 입장)', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                Row(
+                  children: [
+                    SizedBox(
+                      width: 24,
+                      height: 24,
+                      child: Checkbox(
+                        value: _isAutoLoginChecked,
+                        activeColor: primaryColor,
+                        onChanged: (value) {
+                          setState(() {
+                            _isAutoLoginChecked = value ?? false;
+                          });
+                        },
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    InkWell(
+                      onTap: () {
+                        setState(() {
+                          _isAutoLoginChecked = !_isAutoLoginChecked;
+                        });
+                      },
+                      child: Text(
+                        '자동 로그인',
+                        style: TextStyle(
+                          fontSize: 14, 
+                          fontWeight: FontWeight.w500,
+                          color: Theme.of(context).brightness == Brightness.dark ? Colors.white70 : Colors.black54,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 24),
 
-                // 회원가입 유도 링크
+                ElevatedButton(
+                  onPressed: _handleLogin,
+                  style: ElevatedButton.styleFrom(
+                    minimumSize: const Size(double.infinity, 56),
+                    backgroundColor: primaryColor, foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                  ),
+                  child: const Text('로그인', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                ),
+                const SizedBox(height: 16),
+
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(
-                      '처음이신가요? ',
-                      style: TextStyle(color: isDarkMode ? Colors.grey.shade400 : Colors.grey.shade600),
-                    ),
+                    TextButton(onPressed: () {}, child: const Text('비밀번호 찾기', style: TextStyle(color: Colors.grey))),
+                    const Text('|', style: TextStyle(color: Colors.grey)),
                     TextButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => const SignupScreen()),
-                        );
-                      },
-                      style: TextButton.styleFrom(foregroundColor: primaryColor),
-                      child: const Text('회원가입 하기', style: TextStyle(fontWeight: FontWeight.bold)),
+                      onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const SignupScreen())),
+                      child: Text('회원가입', style: TextStyle(color: primaryColor, fontWeight: FontWeight.bold)),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 32),
+
+                Row(
+                  children: [
+                    Expanded(child: Divider(color: Colors.grey.shade300, thickness: 1)),
+                    const Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: Text('또는 간편 로그인', style: TextStyle(color: Colors.grey, fontSize: 13))),
+                    Expanded(child: Divider(color: Colors.grey.shade300, thickness: 1)),
+                  ],
+                ),
+                const SizedBox(height: 24),
+
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    _buildSocialButton(
+                      bgColor: const Color(0xFFFEE500), onTap: () => _launchSocialLoginUrl('카카오톡'),
+                      child: Padding(padding: const EdgeInsets.all(12.0), child: Image.asset('assets/images/kakao.png')),
+                    ),
+                    const SizedBox(width: 24),
+                    _buildSocialButton(
+                      bgColor: Colors.white, isBorder: true, 
+                      onTap: _handleGoogleLogin, 
+                      child: Padding(padding: const EdgeInsets.all(12.0), child: Image.asset('assets/images/google.png')),
+                    ),
+                    const SizedBox(width: 24),
+                    _buildSocialButton(
+                      bgColor: Colors.black, onTap: () => _launchSocialLoginUrl('애플'),
+                      child: const Icon(Icons.apple, color: Colors.white, size: 30),
                     ),
                   ],
                 ),
@@ -172,6 +336,21 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildSocialButton({required Widget child, required Color bgColor, required VoidCallback onTap, bool isBorder = false}) {
+    return InkWell(
+      onTap: onTap, borderRadius: BorderRadius.circular(30),
+      child: Container(
+        width: 56, height: 56,
+        decoration: BoxDecoration(
+          color: bgColor, shape: BoxShape.circle,
+          border: isBorder ? Border.all(color: Colors.grey.shade300, width: 1) : null,
+          boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 10, offset: const Offset(0, 4))],
+        ),
+        child: Center(child: child),
       ),
     );
   }

@@ -6,6 +6,8 @@ class ThemeProvider with ChangeNotifier {
 
   bool get isDarkMode => _isDarkMode;
 
+  ThemeData? get themeData => null;
+
   // 스위치를 껐다 켤 때 실행될 함수
   void toggleTheme(bool value) {
     _isDarkMode = value;

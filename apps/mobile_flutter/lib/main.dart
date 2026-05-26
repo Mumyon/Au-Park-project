@@ -1,40 +1,64 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart'; 
-import 'core/theme/app_theme.dart';
-import 'core/theme/theme_provider.dart'; // 🔥 테마 방송국 불러오기
-import 'features/splash/screens/splash_screen.dart';
-import 'features/vehicle/providers/vehicle_provider.dart'; 
-import 'features/auth/providers/user_provider.dart'; 
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'core/shared_data.dart';
+import 'core/theme/theme_provider.dart';
+import 'features/vehicle/providers/vehicle_provider.dart';
+import 'features/auth/providers/user_provider.dart';
+import 'features/auth/screens/login_screen.dart';
+import 'features/parking/screens/main_navigation_screen.dart'; // 실제 경로에 맞게 수정
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  
+  final prefs = await SharedPreferences.getInstance();
+  final bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
+
+  // 1. 저장된 차량 번호 복구
+  if (isLoggedIn) {
+    SharedData.vehicleNumber.value = prefs.getString('registeredVehicle') ?? "등록된 차량 없음";
+  }
+
+  // 2. 저장된 프로필 정보 복구 (없으면 안산대 인공지능소프트웨어과 영진님 정보로 기본 세팅)
+  final String savedName = prefs.getString('userName') ?? "이영진";
+  final String savedEmail = prefs.getString('userEmail') ?? "youngjin@ansan.ac.kr";
+  final String savedDept = prefs.getString('userDept') ?? "인공지능소프트웨어과";
+
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => VehicleProvider()..loadDummyData()),
-        ChangeNotifierProvider(create: (_) => UserProvider()), 
-        ChangeNotifierProvider(create: (_) => ThemeProvider()), // 🔥 테마 방송국 추가!
+        // 🔥 앱 시작과 동시에 복구된 유저 정보를 프로바이더에 꽂아줍니다!
+        ChangeNotifierProvider(
+          create: (_) => UserProvider()..setUser(name: savedName, email: savedEmail, department: savedDept),
+        ),
+        ChangeNotifierProvider(create: (_) => ThemeProvider()),
       ],
-      child: const AuParkApp(),
+      child: AuParkApp(isLoggedIn: isLoggedIn),
     ),
   );
 }
 
 class AuParkApp extends StatelessWidget {
-  const AuParkApp({super.key});
+  final bool isLoggedIn;
+  
+  const AuParkApp({super.key, required this.isLoggedIn});
 
   @override
   Widget build(BuildContext context) {
-    // 🔥 실시간으로 다크 모드 켜졌는지 확인
-    final themeProvider = Provider.of<ThemeProvider>(context);
-
     return MaterialApp(
       title: 'Au-Park',
-      theme: AppTheme.lightTheme, // 기본 라이트 테마
-      darkTheme: AppTheme.darkTheme, // 다크 테마
-      // 스위치 상태에 따라 테마를 라이트/다크로 전환
-      themeMode: themeProvider.isDarkMode ? ThemeMode.dark : ThemeMode.light, 
-      home: const SplashScreen(), 
       debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        useMaterial3: true,
+        primaryColor: const Color(0xFF003366),
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: const Color(0xFF003366),
+          primary: const Color(0xFF003366),
+        ),
+        scaffoldBackgroundColor: const Color(0xFFF8F9FA),
+      ),
+      home: isLoggedIn ? const MainNavigationScreen() : const LoginScreen(),
     );
   }
 }

@@ -1,7 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../vehicle/providers/vehicle_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart'; 
+// 🔥 탈퇴 기능을 위한 필수 패키지 추가
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:google_sign_in/google_sign_in.dart';
+
+import '../../../core/shared_data.dart'; 
 import '../../auth/providers/user_provider.dart';
+import '../../auth/screens/login_screen.dart'; 
 import '../../vehicle/screens/vehicle_registration_screen.dart';
 import '../../auth/screens/profile_detail_screen.dart';
 import 'payment_method_screen.dart';
@@ -13,24 +20,114 @@ import '../../support/screens/settings_screen.dart';
 class MyPageScreen extends StatelessWidget {
   const MyPageScreen({super.key});
 
+  // ------------------------------------------------------------------------
+  // 🚪 로그아웃 처리 함수
+  // ------------------------------------------------------------------------
+  Future<void> _handleLogout(BuildContext context) async {
+    final prefs = await SharedPreferences.getInstance();
+    
+    await prefs.setBool('isLoggedIn', false);
+    await prefs.remove('registeredVehicle');
+    await prefs.remove('userName');
+    await prefs.remove('userEmail');
+    await prefs.remove('userDept');
+
+    SharedData.vehicleNumber.value = "등록된 차량 없음";
+
+    if (!context.mounted) return;
+    
+    Provider.of<UserProvider>(context, listen: false).clearUser();
+
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (context) => const LoginScreen()),
+      (route) => false, 
+    );
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('🔒 안전하게 로그아웃되었습니다.')),
+    );
+  }
+
+  // ------------------------------------------------------------------------
+  // ⚠️ 회원탈퇴 처리 함수 (DB 삭제 포함)
+  // ------------------------------------------------------------------------
+  Future<void> _showDeleteAccountDialog(BuildContext context) async {
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
+    final userEmail = userProvider.email;
+
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          title: const Text('회원탈퇴', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red)),
+          content: const Text('정말로 탈퇴하시겠습니까?\n등록된 차량 정보와 모든 데이터가 즉시 삭제되며 복구할 수 없습니다.'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(dialogContext), // 취소
+              child: const Text('취소', style: TextStyle(color: Colors.grey)),
+            ),
+            TextButton(
+              onPressed: () async {
+                Navigator.pop(dialogContext); // 다이얼로그 닫기
+                
+                // 로딩창 띄우기
+                showDialog(context: context, barrierDismissible: false, builder: (_) => const Center(child: CircularProgressIndicator()));
+
+                try {
+                  // 1. 서버에 탈퇴 요청 보내기 (DB 삭제)
+                  final url = Uri.parse('http://10.0.2.2:3000/api/deleteAccount');
+                  await http.post(
+                    url,
+                    headers: {'Content-Type': 'application/json'},
+                    body: jsonEncode({'email': userEmail}),
+                  );
+
+                  // 2. 구글 로그인 연동 해제
+                  final GoogleSignIn googleSignIn = GoogleSignIn();
+                  if (await googleSignIn.isSignedIn()) {
+                    await googleSignIn.disconnect(); 
+                  }
+
+                  // 3. 기기 캐시 삭제 및 Provider 초기화
+                  final prefs = await SharedPreferences.getInstance();
+                  await prefs.clear();
+                  SharedData.vehicleNumber.value = "등록된 차량 없음";
+                  
+                  if (!context.mounted) return;
+                  userProvider.clearUser();
+                  Navigator.of(context, rootNavigator: true).pop(); // 로딩창 닫기
+
+                  // 4. 로그인 화면으로 이동
+                  Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(builder: (context) => const LoginScreen()),
+                    (route) => false,
+                  );
+
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('안전하게 탈퇴 처리되었습니다.')));
+
+                } catch (e) {
+                  if (!context.mounted) return;
+                  Navigator.of(context, rootNavigator: true).pop();
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('⚠️ 탈퇴 처리 중 오류가 발생했습니다.')));
+                }
+              },
+              child: const Text('탈퇴하기', style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final primaryColor = Theme.of(context).primaryColor;
     final cardColor = Theme.of(context).cardColor;
-    // 🔥 다크모드 감지
     final isDarkMode = Theme.of(context).brightness == Brightness.dark; 
 
-    final registeredVehicles = Provider.of<VehicleProvider>(context).vehicles;
     final userProfile = Provider.of<UserProvider>(context).user; 
-
-    String vehicleSubtitle;
-    if (registeredVehicles.isEmpty) {
-      vehicleSubtitle = '등록된 차량이 없습니다.';
-    } else if (registeredVehicles.length == 1) {
-      vehicleSubtitle = '현재 등록: ${registeredVehicles.first.plateNumber}';
-    } else {
-      vehicleSubtitle = '현재 등록: ${registeredVehicles.first.plateNumber} 외 ${registeredVehicles.length - 1}대';
-    }
 
     return Scaffold(
       backgroundColor: Colors.transparent,
@@ -89,7 +186,7 @@ class MyPageScreen extends StatelessWidget {
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            userProfile.department,
+                            userProfile.email.isEmpty ? "이메일 정보 없음" : userProfile.email,
                             style: const TextStyle(fontSize: 14, color: Colors.white70),
                           ),
                         ],
@@ -102,10 +199,8 @@ class MyPageScreen extends StatelessWidget {
             ),
             const SizedBox(height: 32),
             
-            // 2. 주요 관리 메뉴 목록
             Text(
               '내 정보 관리', 
-              // 🔥 다크모드일 때 훨씬 밝은 흰색/회색으로 강제 지정
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: isDarkMode ? Colors.white70 : Colors.black54)
             ),
             const SizedBox(height: 12),
@@ -119,24 +214,36 @@ class MyPageScreen extends StatelessWidget {
               ),
               child: Column(
                 children: [
-                  _buildMenuTile(
-                    context: context,
-                    isDarkMode: isDarkMode, // 🔥 다크모드 상태 넘겨주기
-                    icon: Icons.directions_car_outlined, 
-                    title: '차량 등록 / 관리', 
-                    subtitle: vehicleSubtitle, 
-                    onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const VehicleRegistrationScreen())),
+                  ValueListenableBuilder<String>(
+                    valueListenable: SharedData.vehicleNumber,
+                    builder: (context, vehicleNum, child) {
+                      return _buildMenuTile(
+                        context: context,
+                        isDarkMode: isDarkMode, 
+                        icon: Icons.directions_car_outlined, 
+                        title: '차량 등록 / 관리', 
+                        subtitle: vehicleNum, 
+                        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const VehicleRegistrationScreen())),
+                      );
+                    },
                   ),
                   Divider(height: 1, indent: 56, color: isDarkMode ? Colors.grey.shade800 : Colors.grey.shade200),
-                  _buildMenuTile(
-                    context: context,
-                    isDarkMode: isDarkMode,
-                    icon: Icons.credit_card, 
-                    title: '결제 수단 관리', 
-                    subtitle: '신한카드 등록됨',
-                    onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const PaymentMethodScreen())),
+                  
+                  ValueListenableBuilder<String>(
+                    valueListenable: SharedData.paymentMethod,
+                    builder: (context, currentMethod, child) {
+                      return _buildMenuTile(
+                        context: context,
+                        isDarkMode: isDarkMode,
+                        icon: Icons.credit_card, 
+                        title: '결제 수단 관리', 
+                        subtitle: currentMethod, 
+                        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const PaymentMethodScreen())),
+                      );
+                    },
                   ),
                   Divider(height: 1, indent: 56, color: isDarkMode ? Colors.grey.shade800 : Colors.grey.shade200),
+                  
                   _buildMenuTile(
                     context: context,
                     isDarkMode: isDarkMode,
@@ -150,10 +257,8 @@ class MyPageScreen extends StatelessWidget {
             ),
             const SizedBox(height: 32),
             
-            // 3. 고객지원 및 기타 설정
             Text(
               '고객 지원', 
-              // 🔥 다크모드일 때 훨씬 밝은 흰색/회색으로 강제 지정
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: isDarkMode ? Colors.white70 : Colors.black54)
             ),
             const SizedBox(height: 12),
@@ -198,11 +303,54 @@ class MyPageScreen extends StatelessWidget {
             ),
             const SizedBox(height: 32),
 
-            Center(
-              child: TextButton(
-                onPressed: () {},
-                child: Text('로그아웃', style: TextStyle(color: isDarkMode ? Colors.grey.shade400 : Colors.grey, fontSize: 16, decoration: TextDecoration.underline)),
-              ),
+            // 🔥 하단 로그아웃 및 회원탈퇴 버튼 영역
+            Column(
+              children: [
+                Center(
+                  child: TextButton(
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: const Text('로그아웃', style: TextStyle(fontWeight: FontWeight.bold)),
+                            content: const Text('정말 로그아웃하시겠습니까?\n다음번 실행 시 다시 로그인해야 합니다.'),
+                            actions: [
+                              TextButton(
+                                onPressed: () => Navigator.pop(context),
+                                child: const Text('취소', style: TextStyle(color: Colors.grey)),
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                  _handleLogout(context);
+                                },
+                                child: const Text('로그아웃', style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    },
+                    child: Text('로그아웃', style: TextStyle(color: isDarkMode ? Colors.grey.shade400 : Colors.grey, fontSize: 16)),
+                  ),
+                ),
+                
+                // 🔥 회원탈퇴 버튼 추가
+                Center(
+                  child: TextButton(
+                    onPressed: () => _showDeleteAccountDialog(context),
+                    child: Text(
+                      '회원탈퇴', 
+                      style: TextStyle(
+                        color: Colors.redAccent.withValues(alpha: 0.8), 
+                        fontSize: 14, 
+                        decoration: TextDecoration.underline
+                      )
+                    ),
+                  ),
+                ),
+              ],
             ),
             const SizedBox(height: 20),
           ],
@@ -211,7 +359,6 @@ class MyPageScreen extends StatelessWidget {
     );
   }
 
-  // 🔥 타일 내부 글자들도 다크모드에 맞춰 색상 변경되도록 업데이트
   Widget _buildMenuTile({
     required BuildContext context, 
     required bool isDarkMode,

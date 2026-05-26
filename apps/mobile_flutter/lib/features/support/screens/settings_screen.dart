@@ -29,7 +29,7 @@ class SettingsScreen extends StatelessWidget {
             onChanged: (value) {
               themeProvider.toggleTheme(value); // 스위치 누르면 방송국에 업데이트 요청
             },
-            activeColor: const Color(0xFF003366),
+            activeThumbColor: const Color(0xFF003366),
           ),
           
           const Divider(height: 40),
@@ -40,13 +40,13 @@ class SettingsScreen extends StatelessWidget {
             title: const Text('주차 완료 알림 (준비중)', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
             value: true,
             onChanged: (value) {}, // 추후 구현
-            activeColor: const Color(0xFF003366),
+            activeThumbColor: const Color(0xFF003366),
           ),
           SwitchListTile(
             title: const Text('자동 결제 알림 (준비중)', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
             value: true,
             onChanged: (value) {}, // 추후 구현
-            activeColor: const Color(0xFF003366),
+            activeThumbColor: const Color(0xFF003366),
           ),
         ],
       ),

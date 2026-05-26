@@ -8,7 +8,7 @@ class ParkingHistoryScreen extends StatelessWidget {
     final primaryColor = Theme.of(context).primaryColor;
 
     // 테스트용 과거 결제 내역 데이터 (최근 날짜 기준)
-    final List<Map<String, dynamic>> _historyData = [
+    final List<Map<String, dynamic>> historyData = [
       {
         'date': '2026.05.18',
         'location': '본관 주차장',
@@ -40,9 +40,9 @@ class ParkingHistoryScreen extends StatelessWidget {
       ),
       body: ListView.builder(
         padding: const EdgeInsets.all(20),
-        itemCount: _historyData.length,
+        itemCount: historyData.length,
         itemBuilder: (context, index) {
-          final data = _historyData[index];
+          final data = historyData[index];
           return _buildHistoryCard(data, primaryColor);
         },
       ),
