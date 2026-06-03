@@ -14,8 +14,7 @@ class AllMenuScreen extends StatelessWidget {
           const SizedBox(height: 24),
           _buildMenuSection('주차장 이용', [
             _buildMenuItem(Icons.search, '주차장 찾기'),
-            _buildMenuItem(Icons.bookmark_border, '자주가는 주차장'),
-            _buildMenuItem(Icons.history, '과거 이용 내역'),
+            _buildMenuItem(Icons.history, '주차 이용 내역'),
           ]),
           const SizedBox(height: 32),
           _buildMenuSection('결제 및 혜택', [

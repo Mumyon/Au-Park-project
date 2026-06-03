@@ -16,7 +16,7 @@ class ApiException implements Exception {
 class ApiClient {
   static final String baseUrl = Platform.isAndroid
       ? 'http://10.0.2.2:8000/api/v1'
-      : 'http://127.0.0.1:8000/api/v1';
+      : 'http://172.30.1.55:8000/api/v1';
 
   final http.Client _client;
 
@@ -85,15 +85,63 @@ class ApiClient {
     return getJsonList('/parking/lots');
   }
 
+  Future<List<dynamic>> listParkingSlots(String lotId) {
+    return getJsonList('/parking/lots/$lotId/slots');
+  }
+
+  Future<Map<String, dynamic>> requestPayment({
+    required String userId,
+    String? vehicleId,
+    String? plateNumber,
+    required int amount,
+    required String description,
+    String? lotId,
+    String? lotName,
+    DateTime? entryAt,
+    DateTime? exitAt,
+    int? durationMinutes,
+    String? methodName,
+  }) {
+    return postJson('/payments/request', {
+      'user_id': userId,
+      if (vehicleId != null && vehicleId.isNotEmpty) 'vehicle_id': vehicleId,
+      if (plateNumber != null && plateNumber.isNotEmpty) 'plate_number': plateNumber,
+      'amount': amount,
+      'description': description,
+      if (lotId != null) 'lot_id': lotId,
+      if (lotName != null) 'lot_name': lotName,
+      if (entryAt != null) 'entry_at': entryAt.toUtc().toIso8601String(),
+      if (exitAt != null) 'exit_at': exitAt.toUtc().toIso8601String(),
+      if (durationMinutes != null) 'duration_minutes': durationMinutes,
+      if (methodName != null) 'method_name': methodName,
+    });
+  }
+
+  Future<List<dynamic>> listPayments(String userId) {
+    return getJsonList('/payments?user_id=$userId');
+  }
+
   Future<Map<String, dynamic>> registerPaymentMethod({
     required String userId,
     required String methodName,
     required String billingKey,
+    String? pgProvider,
+    String? payMethod,
+    String? impUid,
+    String? merchantUid,
+    String? customerUid,
+    String? status,
   }) {
     return postJson('/payments/methods', {
       'user_id': userId,
       'method_name': methodName,
       'billing_key': billingKey,
+      if (pgProvider != null) 'pg_provider': pgProvider,
+      if (payMethod != null) 'pay_method': payMethod,
+      if (impUid != null) 'imp_uid': impUid,
+      if (merchantUid != null) 'merchant_uid': merchantUid,
+      if (customerUid != null) 'customer_uid': customerUid,
+      if (status != null) 'status': status,
     });
   }
 
@@ -144,7 +192,6 @@ class ApiClient {
         return ApiException(decoded['detail'].toString(), response.statusCode);
       }
     } catch (_) {
-      // Ignore JSON parsing errors and fall through to the generic message.
     }
     return ApiException('API request failed', response.statusCode);
   }

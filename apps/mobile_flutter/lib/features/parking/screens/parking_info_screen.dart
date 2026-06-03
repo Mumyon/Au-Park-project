@@ -24,7 +24,7 @@ class ParkingInfoScreen extends StatelessWidget {
                   Icon(Icons.no_sim_outlined, size: 64, color: Colors.grey.shade400),
                   const SizedBox(height: 16),
                   Text(
-                    '현재 주차 이용 내역이 없습니다.',
+                    '현재 주차중인 차량이 없습니다.',
                     style: TextStyle(fontSize: 16, color: Colors.grey.shade500, fontWeight: FontWeight.w500),
                   ),
                 ],

@@ -16,6 +16,8 @@ class ParkingService:
         self.repo = repo
 
     def list_lots(self) -> list[ParkingLot]:
+        for lot_id in list(self.repo.parking_lots):
+            self.repo.recalculate_lot_availability(lot_id)
         return list(self.repo.parking_lots.values())
 
     def get_lot(self, lot_id: str) -> ParkingLot:
@@ -26,7 +28,8 @@ class ParkingService:
 
     def list_slots(self, lot_id: str) -> list[ParkingSlot]:
         self.get_lot(lot_id)
-        return [slot for slot in self.repo.parking_slots.values() if slot.lot_id == lot_id]
+        slots = [slot for slot in self.repo.parking_slots.values() if slot.lot_id == lot_id]
+        return sorted(slots, key=lambda slot: (slot.row or "", slot.column or 0, slot.label))
 
     def update_slot_status(self, lot_id: str, request: ParkingStatusUpdateRequest) -> ParkingSlot:
         self.get_lot(lot_id)

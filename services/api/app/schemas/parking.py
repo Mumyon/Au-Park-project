@@ -13,6 +13,8 @@ class ParkingSlot(BaseModel):
     id: str
     lot_id: str
     label: str
+    row: str | None = None
+    column: int | None = None
     status: SlotStatus = SlotStatus.empty
 
 

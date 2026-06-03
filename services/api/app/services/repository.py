@@ -14,6 +14,24 @@ from app.schemas.vehicle import Vehicle
 
 ModelT = TypeVar("ModelT", bound=BaseModel)
 
+DEFAULT_LOT_ID = "lot-main"
+DEFAULT_SLOT_ROWS = ("A", "B")
+DEFAULT_SLOT_COLUMNS = range(1, 11)
+
+
+def default_parking_slots() -> list[ParkingSlot]:
+    return [
+        ParkingSlot(
+            id=f"{row}-{column:02d}",
+            lot_id=DEFAULT_LOT_ID,
+            label=f"{row}{column:02d}",
+            row=row,
+            column=column,
+        )
+        for row in DEFAULT_SLOT_ROWS
+        for column in DEFAULT_SLOT_COLUMNS
+    ]
+
 
 def next_id(prefix: str) -> str:
     return f"{prefix}_{uuid4().hex[:12]}"
@@ -50,10 +68,10 @@ class FirebaseModelCollection(MutableMapping[str, ModelT], Generic[ModelT]):
             return default
         return self.model_type.model_validate(value)
 
-    def items(self) -> Iterable[tuple[str, ModelT]]:  # type: ignore[override]
+    def items(self) -> Iterable[tuple[str, ModelT]]:
         return ((key, self.model_type.model_validate(value)) for key, value in self._raw_data().items())
 
-    def values(self) -> Iterable[ModelT]:  # type: ignore[override]
+    def values(self) -> Iterable[ModelT]:
         return (self.model_type.model_validate(value) for value in self._raw_data().values())
 
     def _raw_data(self) -> dict[str, Any]:
@@ -110,18 +128,15 @@ class InMemoryRepository:
         self.user_passwords: dict[str, str] = {}
         self.vehicles: dict[str, Vehicle] = {}
         self.parking_lots: dict[str, ParkingLot] = {
-            "lot-main": ParkingLot(
-                id="lot-main",
+            DEFAULT_LOT_ID: ParkingLot(
+                id=DEFAULT_LOT_ID,
                 name="Au-Park Main",
                 address="Demo parking lot",
-                total_slots=4,
-                available_slots=4,
+                total_slots=20,
+                available_slots=20,
             )
         }
-        self.parking_slots: dict[str, ParkingSlot] = {
-            f"A-{index}": ParkingSlot(id=f"A-{index}", lot_id="lot-main", label=f"A-{index}")
-            for index in range(1, 5)
-        }
+        self.parking_slots: dict[str, ParkingSlot] = {slot.id: slot for slot in default_parking_slots()}
         self.payments: dict[str, Payment] = {}
         self.payment_methods: dict[str, PaymentMethodCreateRequest] = {}
         self.entry_exit_logs: dict[str, EntryExitLog] = {}
@@ -199,19 +214,48 @@ class FirebaseRealtimeRepository(InMemoryRepository):
         return db.reference("/")
 
     def _seed_default_parking_data(self) -> None:
-        if self.parking_lots:
-            return
+        if self.parking_lots.get(DEFAULT_LOT_ID) is None:
+            self.parking_lots[DEFAULT_LOT_ID] = ParkingLot(
+                id=DEFAULT_LOT_ID,
+                name="Au-Park Main",
+                address="Demo parking lot",
+                total_slots=20,
+                available_slots=20,
+            )
+        else:
+            lot = self.parking_lots[DEFAULT_LOT_ID]
+            self.parking_lots[DEFAULT_LOT_ID] = lot.model_copy(
+                update={
+                    "total_slots": 20,
+                    "available_slots": min(lot.available_slots, 20),
+                }
+            )
 
-        self.parking_lots["lot-main"] = ParkingLot(
-            id="lot-main",
+        for legacy_slot_id in ("A-1", "A-2", "A-3", "A-4"):
+            legacy_slot = self.parking_slots.get(legacy_slot_id)
+            if legacy_slot is not None and legacy_slot.lot_id == DEFAULT_LOT_ID:
+                del self.parking_slots[legacy_slot_id]
+
+        for slot in default_parking_slots():
+            existing = self.parking_slots.get(slot.id)
+            if existing is None:
+                self.parking_slots[slot.id] = slot
+            else:
+                self.parking_slots[slot.id] = existing.model_copy(
+                    update={
+                        "label": slot.label,
+                        "row": slot.row,
+                        "column": slot.column,
+                    }
+                )
+
+        self.parking_lots[DEFAULT_LOT_ID] = self.recalculate_lot_availability(DEFAULT_LOT_ID) or ParkingLot(
+            id=DEFAULT_LOT_ID,
             name="Au-Park Main",
             address="Demo parking lot",
-            total_slots=4,
-            available_slots=4,
+            total_slots=20,
+            available_slots=20,
         )
-        for index in range(1, 5):
-            slot_id = f"A-{index}"
-            self.parking_slots[slot_id] = ParkingSlot(id=slot_id, lot_id="lot-main", label=slot_id)
 
 
 def create_repository() -> InMemoryRepository:

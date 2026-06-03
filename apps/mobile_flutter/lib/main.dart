@@ -19,10 +19,10 @@ void main() async {
     SharedData.vehicleNumber.value = prefs.getString('registeredVehicle') ?? "등록된 차량 없음";
   }
 
-  // 2. 저장된 프로필 정보 복구 (없으면 안산대 인공지능소프트웨어과 영진님 정보로 기본 세팅)
+  // 2. 저장된 프로필 정보 복구 
   final String savedUserId = prefs.getString('userId') ?? "";
-  final String savedName = prefs.getString('userName') ?? "이영진";
-  final String savedEmail = prefs.getString('userEmail') ?? "youngjin@ansan.ac.kr";
+  final String savedName = prefs.getString('userName') ?? "병진";
+  final String savedEmail = prefs.getString('userEmail') ?? "byungjin@ansan.ac.kr";
   final String savedDept = prefs.getString('userDept') ?? "인공지능소프트웨어과";
 
   runApp(

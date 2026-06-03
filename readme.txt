@@ -26,7 +26,31 @@ cd /Users/jobyeongik/Documents/GitHub/Au-Park-project/services/api
 
 Run flutter 
 
+1. Mac
+
 cd /Users/jobyeongik/Documents/GitHub/Au-Park-project/apps/mobile_flutter
 flutter run
+
+2. iphone
+
+ipconfig getifaddr en0
+
+open /Users/jobyeongik/Documents/GitHub/Au-Park-project/apps/mobile_flutter/lib/core/api/api_client.dart
+
+class ApiClient {
+  static final String baseUrl = Platform.isAndroid
+      ? 'http://10.0.2.2:8000/api/v1'
+      : 'http://172.30.1.55:8000/api/v1';   <- your computer's ip
+
+cd /Users/jobyeongik/Documents/GitHub/Au-Park-project/services/api
+.venv-conda/bin/python -m uvicorn app.main:app --host 0.0.0.0 --port 8000
+
+
+cd /Users/jobyeongik/Documents/GitHub/Au-Park-project/apps/mobile_flutter
+
+flutter devices
+
+flutter run -d xxxxxxxx     <- fill the UID
+
 
 you should download flutter SDK in homebrew
