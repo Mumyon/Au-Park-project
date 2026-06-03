@@ -14,3 +14,17 @@ env/
 .vscode/
 
 .DS_Store
+
+# Flutter / Dart generated files
+.dart_tool/
+**/.dart_tool/
+build/
+**/build/
+.flutter-plugins
+.flutter-plugins-dependencies
+
+# CocoaPods generated files
+Pods/
+**/Pods/
+**/.symlinks/
+**/Flutter/ephemeral/
