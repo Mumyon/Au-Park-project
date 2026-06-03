@@ -1,0 +1,4 @@
+module AppCheckCore {
+umbrella header "/Users/jobyeongik/Documents/GitHub/Au-Park-project/apps/mobile_flutter/build/macos/SourcePackages/checkouts/app-check/AppCheckCore/Sources/Public/AppCheckCore/AppCheckCore.h"
+export *
+}

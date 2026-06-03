@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart'; 
-// 🔥 탈퇴 기능을 위한 필수 패키지 추가
-import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:google_sign_in/google_sign_in.dart';
 
@@ -65,6 +63,7 @@ class _MyPageScreenState extends State<MyPageScreen> {
     final prefs = await SharedPreferences.getInstance();
     
     await prefs.setBool('isLoggedIn', false);
+    await prefs.remove('userId');
     await prefs.remove('registeredVehicle');
     await prefs.remove('userName');
     await prefs.remove('userEmail');
@@ -88,11 +87,10 @@ class _MyPageScreenState extends State<MyPageScreen> {
   }
 
   // ------------------------------------------------------------------------
-  // ⚠️ 회원탈퇴 처리 함수 (DB 삭제 포함)
+  // ⚠️ 회원탈퇴 처리 함수 (로컬 로그인 정보 삭제)
   // ------------------------------------------------------------------------
   Future<void> _showDeleteAccountDialog(BuildContext context) async {
     final userProvider = Provider.of<UserProvider>(context, listen: false);
-    final userEmail = userProvider.email;
 
     showDialog(
       context: context,
@@ -113,21 +111,13 @@ class _MyPageScreenState extends State<MyPageScreen> {
                 showDialog(context: context, barrierDismissible: false, builder: (_) => const Center(child: CircularProgressIndicator()));
 
                 try {
-                  // 1. 서버에 탈퇴 요청 보내기 (DB 삭제)
-                  final url = Uri.parse('http://10.0.2.2:3000/api/deleteAccount');
-                  await http.post(
-                    url,
-                    headers: {'Content-Type': 'application/json'},
-                    body: jsonEncode({'email': userEmail}),
-                  );
-
-                  // 2. 구글 로그인 연동 해제
+                  // 1. 구글 로그인 연동 해제
                   final GoogleSignIn googleSignIn = GoogleSignIn();
                   if (await googleSignIn.isSignedIn()) {
                     await googleSignIn.disconnect(); 
                   }
 
-                  // 3. 기기 캐시 삭제 및 Provider 초기화
+                  // 2. 기기 캐시 삭제 및 Provider 초기화
                   final prefs = await SharedPreferences.getInstance();
                   await prefs.clear();
                   SharedData.vehicleNumber.value = "등록된 차량 없음";
@@ -136,14 +126,14 @@ class _MyPageScreenState extends State<MyPageScreen> {
                   userProvider.clearUser();
                   Navigator.of(context, rootNavigator: true).pop(); // 로딩창 닫기
 
-                  // 4. 로그인 화면으로 이동
+                  // 3. 로그인 화면으로 이동
                   Navigator.pushAndRemoveUntil(
                     context,
                     MaterialPageRoute(builder: (context) => const LoginScreen()),
                     (route) => false,
                   );
 
-                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('안전하게 탈퇴 처리되었습니다.')));
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('로컬 로그인 정보가 삭제되었습니다.')));
 
                 } catch (e) {
                   if (!context.mounted) return;

@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 
 // ⚠️ 본인의 폴더 구조에 맞게 경로 확인 필수!
 import '../../../core/shared_data.dart';
 import '../../auth/providers/user_provider.dart';
+import '../providers/vehicle_provider.dart';
 
 class VehicleRegistrationScreen extends StatefulWidget {
   const VehicleRegistrationScreen({super.key});
@@ -20,56 +19,31 @@ class _VehicleRegistrationScreenState extends State<VehicleRegistrationScreen> {
   final _vehicleNumberController = TextEditingController();
 
   @override
+  void initState() {
+    super.initState();
+    Future.microtask(_loadVehicles);
+  }
+
+  @override
   void dispose() {
     _vehicleNumberController.dispose();
     super.dispose();
   }
 
-  // 🚀 1. 서버에 차량 정보(등록 또는 삭제) 업데이트 요청 함수 (안전장치 추가)
-  Future<bool> _updateVehicleOnServer(String vehicleNum) async {
+  Future<String> _resolveUserId() async {
     final userProvider = Provider.of<UserProvider>(context, listen: false);
-    
-    // 🔥 1. 기본적으로 Provider에서 이메일 가져오기
-    String userEmail = userProvider.email?.toString() ?? '';
-
-    // 🔥 2. 백업 플랜: 핫리로드 등으로 데이터가 증발했다면 기기 캐시에서 끌어옵니다!
-    if (userEmail.isEmpty) {
-      final prefs = await SharedPreferences.getInstance();
-      userEmail = prefs.getString('userEmail') ?? ''; 
+    if (userProvider.userId.isNotEmpty) {
+      return userProvider.userId;
     }
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('userId') ?? '';
+  }
 
-    // 🔥 3. 그래도 이메일이 없다면? 서버 통신 전에 앱에서 차단!
-    if (userEmail.isEmpty) {
-      _showSnackBar('⚠️ 내 정보가 유실되었습니다. 마이페이지에서 로그아웃 후 다시 로그인해주세요.', Colors.redAccent);
-      return false;
-    }
-
-    try {
-      final url = Uri.parse('http://10.0.2.2:3000/api/update-vehicle');
-      final response = await http.post(
-        url,
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-          'email': userEmail, // 안전하게 확보한 이메일 전송!
-          'registeredVehicle': vehicleNum,
-        }),
-      );
-
-      final result = jsonDecode(response.body);
-      if (response.statusCode == 200 && result['success'] == true) {
-        // 전역 상태 및 디바이스 로컬 캐시 최신화
-        SharedData.vehicleNumber.value = vehicleNum;
-        final prefs = await SharedPreferences.getInstance();
-        await prefs.setString('registeredVehicle', vehicleNum);
-        return true;
-      } else {
-        _showSnackBar('❌ 실패: ${result['message']}', Colors.redAccent);
-        return false;
-      }
-    } catch (e) {
-      _showSnackBar('⚠️ 서버 통신 실패. 백엔드 서버 상태를 확인하세요.', Colors.orange);
-      return false;
-    }
+  Future<void> _loadVehicles() async {
+    final userId = await _resolveUserId();
+    if (userId.isEmpty) return;
+    if (!mounted) return;
+    await Provider.of<VehicleProvider>(context, listen: false).loadForUser(userId);
   }
 
   // 편리한 스낵바 호출을 위한 헬퍼 함수
@@ -155,15 +129,27 @@ class _VehicleRegistrationScreenState extends State<VehicleRegistrationScreen> {
                         builder: (context) => const Center(child: CircularProgressIndicator()),
                       );
 
-                      // 🔥 백엔드 연동: 파이어베이스 서버 업데이트
-                      bool isSuccess = await _updateVehicleOnServer(finalCarNumber);
+                      final userId = await _resolveUserId();
+                      if (userId.isEmpty) {
+                        if (!context.mounted) return;
+                        Navigator.of(context, rootNavigator: true).pop();
+                        _showSnackBar('⚠️ 로그인 정보가 없습니다. 다시 로그인해주세요.', Colors.redAccent);
+                        return;
+                      }
+
+                      final provider = Provider.of<VehicleProvider>(context, listen: false);
+                      final vehicle = await provider.addVehicle(userId, finalCarNumber, '본인');
 
                       if (!context.mounted) return;
                       Navigator.of(context, rootNavigator: true).pop(); // 로딩창 닫기
 
-                      if (isSuccess) {
+                      if (vehicle != null) {
+                        final prefs = await SharedPreferences.getInstance();
+                        await prefs.setString('registeredVehicle', vehicle.plateNumber);
                         Navigator.pop(sheetContext); // 바텀시트 닫기
                         _showSnackBar('✅ $finalCarNumber 차량이 Au-Park 시스템에 등록되었습니다!', Colors.green);
+                      } else {
+                        _showSnackBar('❌ ${provider.errorMessage ?? '차량 등록에 실패했습니다.'}', Colors.redAccent);
                       }
                     }
                   },
@@ -185,8 +171,7 @@ class _VehicleRegistrationScreenState extends State<VehicleRegistrationScreen> {
     );
   }
 
-  // 🗑️ 차량 삭제(초기화) 기능
-  Future<void> _deleteVehicle() async {
+  Future<void> _deleteVehicle(String vehicleId) async {
     // 삭제 전 로딩창 표시
     showDialog(
       context: context,
@@ -194,14 +179,18 @@ class _VehicleRegistrationScreenState extends State<VehicleRegistrationScreen> {
       builder: (context) => const Center(child: CircularProgressIndicator()),
     );
 
-    // 🔥 백엔드 연동: 파이어베이스에 "등록된 차량 없음"으로 강제 업데이트
-    bool isSuccess = await _updateVehicleOnServer("등록된 차량 없음");
+    final provider = Provider.of<VehicleProvider>(context, listen: false);
+    final isSuccess = await provider.removeVehicle(vehicleId);
 
     if (!mounted) return;
     Navigator.of(context, rootNavigator: true).pop(); // 로딩창 닫기
 
     if (isSuccess) {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('registeredVehicle', SharedData.vehicleNumber.value);
       _showSnackBar('🗑️ 차량 정보가 안전하게 삭제되었습니다.');
+    } else {
+      _showSnackBar('❌ ${provider.errorMessage ?? '차량 삭제에 실패했습니다.'}', Colors.redAccent);
     }
   }
 
@@ -227,11 +216,13 @@ class _VehicleRegistrationScreenState extends State<VehicleRegistrationScreen> {
             const SizedBox(height: 16),
             
             Expanded(
-              child: ValueListenableBuilder<String>(
-                valueListenable: SharedData.vehicleNumber,
-                builder: (context, currentNumber, child) {
-                  // 차량이 없을 때 텅 빈 화면
-                  if (currentNumber == "등록된 차량 없음") {
+              child: Consumer<VehicleProvider>(
+                builder: (context, vehicleProvider, child) {
+                  if (vehicleProvider.isLoading) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+
+                  if (vehicleProvider.vehicles.isEmpty) {
                     return Center(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -246,10 +237,12 @@ class _VehicleRegistrationScreenState extends State<VehicleRegistrationScreen> {
                     );
                   }
 
-                  // 차량이 있을 때 예쁜 카드 형태
-                  return Column(
-                    children: [
-                      Container(
+                  return ListView.separated(
+                    itemCount: vehicleProvider.vehicles.length,
+                    separatorBuilder: (_, __) => const SizedBox(height: 12),
+                    itemBuilder: (context, index) {
+                      final vehicle = vehicleProvider.vehicles[index];
+                      return Container(
                         padding: const EdgeInsets.all(20),
                         decoration: BoxDecoration(
                           color: Theme.of(context).cardColor,
@@ -271,7 +264,7 @@ class _VehicleRegistrationScreenState extends State<VehicleRegistrationScreen> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(currentNumber, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                                  Text(vehicle.plateNumber, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                                   const SizedBox(height: 4),
                                   const Text('주차 요금 자동 정산 차량', style: TextStyle(fontSize: 12, color: Colors.blue, fontWeight: FontWeight.bold)),
                                 ],
@@ -292,7 +285,7 @@ class _VehicleRegistrationScreenState extends State<VehicleRegistrationScreen> {
                                       TextButton(
                                         onPressed: () {
                                           Navigator.pop(context);
-                                          _deleteVehicle();
+                                          _deleteVehicle(vehicle.id);
                                         },
                                         child: const Text('삭제', style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
                                       ),
@@ -303,8 +296,8 @@ class _VehicleRegistrationScreenState extends State<VehicleRegistrationScreen> {
                             ),
                           ],
                         ),
-                      ),
-                    ],
+                      );
+                    },
                   );
                 },
               ),

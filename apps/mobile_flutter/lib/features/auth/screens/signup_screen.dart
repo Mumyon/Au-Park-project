@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'dart:convert';
-import 'package:http/http.dart' as http;
+
+import '../../../core/api/api_client.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -10,6 +10,7 @@ class SignupScreen extends StatefulWidget {
 }
 
 class _SignupScreenState extends State<SignupScreen> {
+  final ApiClient _apiClient = ApiClient();
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
@@ -40,36 +41,34 @@ class _SignupScreenState extends State<SignupScreen> {
       );
 
       try {
-        final url = Uri.parse('http://10.0.2.2:3000/api/signup');
-        final response = await http.post(
-          url,
-          headers: {'Content-Type': 'application/json'},
-          body: jsonEncode({
-            'email': _emailController.text.trim(),
-            'password': _passwordController.text.trim(),
-            'name': _nameController.text.trim(),
-            // 🔥 차량 번호 전송 (입력 안 했으면 기본값으로 셋팅)
-            'registeredVehicle': _vehicleController.text.trim().isEmpty 
-                ? "등록된 차량 없음" 
-                : _vehicleController.text.trim(),
-          }),
+        final user = await _apiClient.signup(
+          email: _emailController.text.trim(),
+          password: _passwordController.text.trim(),
+          name: _nameController.text.trim(),
         );
+
+        final vehicleNumber = _vehicleController.text.trim().replaceAll(' ', '');
+        if (vehicleNumber.isNotEmpty) {
+          await _apiClient.createVehicle(
+            userId: user['id'],
+            plateNumber: vehicleNumber,
+            nickname: '본인',
+          );
+        }
 
         if (!mounted) return;
         Navigator.pop(context); // 로딩창 닫기
 
-        final result = jsonDecode(response.body);
-
-        if (response.statusCode == 201 && result['success'] == true) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('🎉 가입 성공! 이제 로그인해주세요.'), backgroundColor: Colors.green),
-          );
-          Navigator.pop(context); // 가입 성공 시 로그인 화면으로 복귀
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('❌ 실패: ${result['message']}'), backgroundColor: Colors.redAccent),
-          );
-        }
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('🎉 가입 성공! 이제 로그인해주세요.'), backgroundColor: Colors.green),
+        );
+        Navigator.pop(context); // 가입 성공 시 로그인 화면으로 복귀
+      } on ApiException catch (e) {
+        if (!mounted) return;
+        Navigator.pop(context);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('❌ 실패: ${e.message}'), backgroundColor: Colors.redAccent),
+        );
       } catch (e) {
         if (!mounted) return;
         Navigator.pop(context);
@@ -132,7 +131,7 @@ class _SignupScreenState extends State<SignupScreen> {
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) return '비밀번호를 입력해주세요.';
-                    if (value.length < 6) return '비밀번호는 6자 이상이어야 합니다.';
+                    if (value.length < 8) return '비밀번호는 8자 이상이어야 합니다.';
                     
                     // 영문자와 숫자가 각각 1개 이상 포함되고, 영문/숫자로만 이루어졌는지 검사
                     final RegExp passwordRegex = RegExp(r'^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]+$');

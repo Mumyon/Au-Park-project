@@ -6,6 +6,8 @@ class User(BaseModel):
     email: EmailStr
     name: str
     phone: str | None = None
+    auth_provider: str = "email"
+    provider_user_id: str | None = None
 
 
 class UserUpdateRequest(BaseModel):

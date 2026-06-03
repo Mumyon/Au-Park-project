@@ -1,0 +1,4 @@
+module AppAuthCore {
+umbrella "/Users/jobyeongik/Documents/GitHub/Au-Park-project/apps/mobile_flutter/build/macos/SourcePackages/checkouts/AppAuth-iOS/Sources/AppAuthCore"
+export *
+}

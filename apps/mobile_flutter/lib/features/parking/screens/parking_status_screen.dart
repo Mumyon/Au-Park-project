@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../core/api/api_client.dart';
+
 class ParkingStatusScreen extends StatefulWidget {
   const ParkingStatusScreen({super.key});
 
@@ -8,6 +10,45 @@ class ParkingStatusScreen extends StatefulWidget {
 }
 
 class _ParkingStatusScreenState extends State<ParkingStatusScreen> {
+  final ApiClient _apiClient = ApiClient();
+  List<Map<String, dynamic>> _lots = [];
+  bool _isLoading = true;
+  String? _errorMessage;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadParkingLots();
+  }
+
+  Future<void> _loadParkingLots() async {
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+
+    try {
+      final lots = await _apiClient.listParkingLots();
+      if (!mounted) return;
+      setState(() {
+        _lots = lots.whereType<Map<String, dynamic>>().toList();
+        _isLoading = false;
+      });
+    } on ApiException catch (error) {
+      if (!mounted) return;
+      setState(() {
+        _errorMessage = error.message;
+        _isLoading = false;
+      });
+    } catch (_) {
+      if (!mounted) return;
+      setState(() {
+        _errorMessage = '주차 현황 정보를 불러오지 못했습니다.';
+        _isLoading = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
@@ -35,8 +76,9 @@ class _ParkingStatusScreenState extends State<ParkingStatusScreen> {
               // 🔄 새로고침 아이콘 버튼 추가
               IconButton(
                 icon: Icon(Icons.refresh, color: Theme.of(context).primaryColor, size: 22),
-                onPressed: () {
-                  // 버튼 조작감 테스트를 위한 스낵바 알림
+                onPressed: () async {
+                  await _loadParkingLots();
+                  if (!mounted) return;
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
                       content: Text('주차 현황 정보를 새로고침했습니다. 🔄'),
@@ -51,11 +93,42 @@ class _ParkingStatusScreenState extends State<ParkingStatusScreen> {
           ),
           const SizedBox(height: 20), // 레이아웃 균형을 위해 공백 소폭 조정
           
-          _buildParkingCard(context, '정문 제1주차장', 45, 100, Colors.orange),
-          const SizedBox(height: 16),
-          _buildParkingCard(context, '본관 주차장', 98, 100, Colors.red),
-          const SizedBox(height: 16),
-          _buildParkingCard(context, '학생회관 주차장', 35, 50, Colors.green),
+          if (_isLoading)
+            const Padding(
+              padding: EdgeInsets.only(top: 80),
+              child: Center(child: CircularProgressIndicator()),
+            )
+          else if (_errorMessage != null)
+            Padding(
+              padding: const EdgeInsets.only(top: 80),
+              child: Center(child: Text(_errorMessage!, style: const TextStyle(color: Colors.redAccent))),
+            )
+          else if (_lots.isEmpty)
+            const Padding(
+              padding: EdgeInsets.only(top: 80),
+              child: Center(child: Text('등록된 주차장이 없습니다.')),
+            )
+          else
+            ..._lots.map((lot) {
+              final total = lot['total_slots'] as int? ?? 0;
+              final available = lot['available_slots'] as int? ?? 0;
+              final occupied = (total - available).clamp(0, total).toInt();
+              final color = available == 0
+                  ? Colors.red
+                  : available <= (total * 0.3)
+                      ? Colors.orange
+                      : Colors.green;
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 16),
+                child: _buildParkingCard(
+                  context,
+                  lot['name'] ?? lot['id'] ?? '주차장',
+                  occupied,
+                  total == 0 ? 1 : total,
+                  color,
+                ),
+              );
+            }),
         ],
       ),
     );

@@ -1,0 +1,33 @@
+moduledependenciestarget: \
+  /Users/jobyeongik/Documents/GitHub/Au-Park-project/apps/mobile_flutter/build/macos/Build/Intermediates.noindex/GeneratedModuleMaps/AppAuthCore.modulemap \
+  /Users/jobyeongik/Documents/GitHub/Au-Park-project/apps/mobile_flutter/build/macos/SourcePackages/checkouts/AppAuth-iOS/Sources/AppAuthCore/OIDAuthState.h \
+  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk/System/Library/Frameworks/Foundation.framework/Modules/module.modulemap \
+  /Users/jobyeongik/Documents/GitHub/Au-Park-project/apps/mobile_flutter/build/macos/SourcePackages/checkouts/AppAuth-iOS/Sources/AppAuthCore/OIDAuthStateChangeDelegate.h \
+  /Users/jobyeongik/Documents/GitHub/Au-Park-project/apps/mobile_flutter/build/macos/SourcePackages/checkouts/AppAuth-iOS/Sources/AppAuthCore/OIDAuthStateErrorDelegate.h \
+  /Users/jobyeongik/Documents/GitHub/Au-Park-project/apps/mobile_flutter/build/macos/SourcePackages/checkouts/AppAuth-iOS/Sources/AppAuthCore/OIDAuthorizationRequest.h \
+  /Users/jobyeongik/Documents/GitHub/Au-Park-project/apps/mobile_flutter/build/macos/SourcePackages/checkouts/AppAuth-iOS/Sources/AppAuthCore/OIDExternalUserAgentRequest.h \
+  /Users/jobyeongik/Documents/GitHub/Au-Park-project/apps/mobile_flutter/build/macos/SourcePackages/checkouts/AppAuth-iOS/Sources/AppAuthCore/OIDResponseTypes.h \
+  /Users/jobyeongik/Documents/GitHub/Au-Park-project/apps/mobile_flutter/build/macos/SourcePackages/checkouts/AppAuth-iOS/Sources/AppAuthCore/OIDScopes.h \
+  /Users/jobyeongik/Documents/GitHub/Au-Park-project/apps/mobile_flutter/build/macos/SourcePackages/checkouts/AppAuth-iOS/Sources/AppAuthCore/OIDAuthorizationResponse.h \
+  /Users/jobyeongik/Documents/GitHub/Au-Park-project/apps/mobile_flutter/build/macos/SourcePackages/checkouts/AppAuth-iOS/Sources/AppAuthCore/OIDAuthorizationService.h \
+  /Users/jobyeongik/Documents/GitHub/Au-Park-project/apps/mobile_flutter/build/macos/SourcePackages/checkouts/AppAuth-iOS/Sources/AppAuthCore/OIDClientMetadataParameters.h \
+  /Users/jobyeongik/Documents/GitHub/Au-Park-project/apps/mobile_flutter/build/macos/SourcePackages/checkouts/AppAuth-iOS/Sources/AppAuthCore/OIDDefines.h \
+  /Users/jobyeongik/Documents/GitHub/Au-Park-project/apps/mobile_flutter/build/macos/SourcePackages/checkouts/AppAuth-iOS/Sources/AppAuthCore/OIDEndSessionRequest.h \
+  /Users/jobyeongik/Documents/GitHub/Au-Park-project/apps/mobile_flutter/build/macos/SourcePackages/checkouts/AppAuth-iOS/Sources/AppAuthCore/OIDEndSessionResponse.h \
+  /Users/jobyeongik/Documents/GitHub/Au-Park-project/apps/mobile_flutter/build/macos/SourcePackages/checkouts/AppAuth-iOS/Sources/AppAuthCore/OIDError.h \
+  /Users/jobyeongik/Documents/GitHub/Au-Park-project/apps/mobile_flutter/build/macos/SourcePackages/checkouts/AppAuth-iOS/Sources/AppAuthCore/OIDErrorUtilities.h \
+  /Users/jobyeongik/Documents/GitHub/Au-Park-project/apps/mobile_flutter/build/macos/SourcePackages/checkouts/AppAuth-iOS/Sources/AppAuthCore/OIDExternalUserAgent.h \
+  /Users/jobyeongik/Documents/GitHub/Au-Park-project/apps/mobile_flutter/build/macos/SourcePackages/checkouts/AppAuth-iOS/Sources/AppAuthCore/OIDExternalUserAgentSession.h \
+  /Users/jobyeongik/Documents/GitHub/Au-Park-project/apps/mobile_flutter/build/macos/SourcePackages/checkouts/AppAuth-iOS/Sources/AppAuthCore/OIDFieldMapping.h \
+  /Users/jobyeongik/Documents/GitHub/Au-Park-project/apps/mobile_flutter/build/macos/SourcePackages/checkouts/AppAuth-iOS/Sources/AppAuthCore/OIDGrantTypes.h \
+  /Users/jobyeongik/Documents/GitHub/Au-Park-project/apps/mobile_flutter/build/macos/SourcePackages/checkouts/AppAuth-iOS/Sources/AppAuthCore/OIDIDToken.h \
+  /Users/jobyeongik/Documents/GitHub/Au-Park-project/apps/mobile_flutter/build/macos/SourcePackages/checkouts/AppAuth-iOS/Sources/AppAuthCore/OIDRegistrationRequest.h \
+  /Users/jobyeongik/Documents/GitHub/Au-Park-project/apps/mobile_flutter/build/macos/SourcePackages/checkouts/AppAuth-iOS/Sources/AppAuthCore/OIDRegistrationResponse.h \
+  /Users/jobyeongik/Documents/GitHub/Au-Park-project/apps/mobile_flutter/build/macos/SourcePackages/checkouts/AppAuth-iOS/Sources/AppAuthCore/OIDScopeUtilities.h \
+  /Users/jobyeongik/Documents/GitHub/Au-Park-project/apps/mobile_flutter/build/macos/SourcePackages/checkouts/AppAuth-iOS/Sources/AppAuthCore/OIDServiceConfiguration.h \
+  /Users/jobyeongik/Documents/GitHub/Au-Park-project/apps/mobile_flutter/build/macos/SourcePackages/checkouts/AppAuth-iOS/Sources/AppAuthCore/OIDServiceDiscovery.h \
+  /Users/jobyeongik/Documents/GitHub/Au-Park-project/apps/mobile_flutter/build/macos/SourcePackages/checkouts/AppAuth-iOS/Sources/AppAuthCore/OIDTokenRequest.h \
+  /Users/jobyeongik/Documents/GitHub/Au-Park-project/apps/mobile_flutter/build/macos/SourcePackages/checkouts/AppAuth-iOS/Sources/AppAuthCore/OIDTokenResponse.h \
+  /Users/jobyeongik/Documents/GitHub/Au-Park-project/apps/mobile_flutter/build/macos/SourcePackages/checkouts/AppAuth-iOS/Sources/AppAuthCore/OIDTokenUtilities.h \
+  /Users/jobyeongik/Documents/GitHub/Au-Park-project/apps/mobile_flutter/build/macos/SourcePackages/checkouts/AppAuth-iOS/Sources/AppAuthCore/OIDURLQueryComponent.h \
+  /Users/jobyeongik/Documents/GitHub/Au-Park-project/apps/mobile_flutter/build/macos/SourcePackages/checkouts/AppAuth-iOS/Sources/AppAuthCore/OIDURLSessionProvider.h

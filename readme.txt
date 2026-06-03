@@ -17,3 +17,16 @@ docs: 구조도, API, 흐름, 하드웨어, 운영 문서
 tests: 통합/e2e 테스트
 
 assets/samples: 번호판 이미지와 주차장 영상 샘플
+
+
+Run FastAPI Server in Mac
+
+cd /Users/jobyeongik/Documents/GitHub/Au-Park-project/services/api
+.venv-conda/bin/python -m uvicorn app.main:app --host 127.0.0.1 --port 8000
+
+Run flutter 
+
+cd /Users/jobyeongik/Documents/GitHub/Au-Park-project/apps/mobile_flutter
+flutter run
+
+you should download flutter SDK in homebrew

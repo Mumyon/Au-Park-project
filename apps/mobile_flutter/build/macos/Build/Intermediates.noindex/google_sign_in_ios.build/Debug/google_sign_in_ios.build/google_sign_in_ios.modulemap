@@ -1,0 +1,4 @@
+module google_sign_in_ios {
+umbrella "/Users/jobyeongik/Documents/GitHub/Au-Park-project/apps/mobile_flutter/macos/Flutter/ephemeral/Packages/.packages/google_sign_in_ios-5.9.0/Sources/google_sign_in_ios/include"
+export *
+}

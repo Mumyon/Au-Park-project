@@ -1,0 +1,4 @@
+module GoogleUtilities_Environment {
+umbrella "/Users/jobyeongik/Documents/GitHub/Au-Park-project/apps/mobile_flutter/build/macos/SourcePackages/checkouts/GoogleUtilities/GoogleUtilities/Environment/Public"
+export *
+}

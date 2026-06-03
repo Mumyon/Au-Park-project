@@ -9,6 +9,7 @@ class Settings(BaseSettings):
 
     firebase_database_url: str | None = None
     firebase_credentials_path: str | None = None
+    google_oauth_client_ids: str | None = None
     portone_api_secret: str | None = None
 
     model_config = SettingsConfigDict(

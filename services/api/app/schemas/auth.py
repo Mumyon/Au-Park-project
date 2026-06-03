@@ -1,3 +1,5 @@
+from enum import StrEnum
+
 from pydantic import BaseModel, EmailStr, Field
 
 
@@ -11,6 +13,17 @@ class SignUpRequest(BaseModel):
 class LoginRequest(BaseModel):
     email: EmailStr
     password: str
+
+
+class SocialAuthProvider(StrEnum):
+    google = "google"
+    kakao = "kakao"
+    naver = "naver"
+
+
+class SocialLoginRequest(BaseModel):
+    provider: SocialAuthProvider
+    token: str = Field(min_length=1)
 
 
 class TokenResponse(BaseModel):

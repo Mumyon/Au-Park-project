@@ -20,6 +20,7 @@ void main() async {
   }
 
   // 2. 저장된 프로필 정보 복구 (없으면 안산대 인공지능소프트웨어과 영진님 정보로 기본 세팅)
+  final String savedUserId = prefs.getString('userId') ?? "";
   final String savedName = prefs.getString('userName') ?? "이영진";
   final String savedEmail = prefs.getString('userEmail') ?? "youngjin@ansan.ac.kr";
   final String savedDept = prefs.getString('userDept') ?? "인공지능소프트웨어과";
@@ -27,10 +28,10 @@ void main() async {
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => VehicleProvider()..loadDummyData()),
+        ChangeNotifierProvider(create: (_) => VehicleProvider()..loadForUser(savedUserId)),
         // 🔥 앱 시작과 동시에 복구된 유저 정보를 프로바이더에 꽂아줍니다!
         ChangeNotifierProvider(
-          create: (_) => UserProvider()..setUser(name: savedName, email: savedEmail, department: savedDept),
+          create: (_) => UserProvider()..setUser(id: savedUserId, name: savedName, email: savedEmail, department: savedDept),
         ),
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
       ],

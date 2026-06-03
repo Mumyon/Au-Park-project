@@ -1,11 +1,13 @@
 class VehicleModel {
   final String id;           // 데이터베이스 고유 ID
+  final String userId;
   final String plateNumber;  // 차량 번호 (예: 12가 3456)
   final String ownerType;    // 명의 (본인, 가족, 법인/렌트)
   final bool isDefault;      // 대표(기본) 차량 여부
 
   VehicleModel({
     required this.id,
+    this.userId = '',
     required this.plateNumber,
     this.ownerType = '본인',
     this.isDefault = false,
@@ -15,9 +17,10 @@ class VehicleModel {
   factory VehicleModel.fromJson(Map<String, dynamic> json) {
     return VehicleModel(
       id: json['id'] ?? '',
-      plateNumber: json['plateNumber'] ?? '',
-      ownerType: json['ownerType'] ?? '본인',
-      isDefault: json['isDefault'] ?? false,
+      userId: json['user_id'] ?? json['userId'] ?? '',
+      plateNumber: json['plate_number'] ?? json['plateNumber'] ?? '',
+      ownerType: json['nickname'] ?? json['ownerType'] ?? '본인',
+      isDefault: json['is_default'] ?? json['isDefault'] ?? false,
     );
   }
 
@@ -25,9 +28,10 @@ class VehicleModel {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'plateNumber': plateNumber,
-      'ownerType': ownerType,
-      'isDefault': isDefault,
+      'user_id': userId,
+      'plate_number': plateNumber,
+      'nickname': ownerType,
+      'is_default': isDefault,
     };
   }
 }

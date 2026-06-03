@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from app.schemas.auth import LoginRequest, SignUpRequest, TokenResponse
+from app.schemas.auth import LoginRequest, SignUpRequest, SocialLoginRequest, TokenResponse
 from app.schemas.user import User
 from app.services.auth_service import auth_service
 
@@ -16,3 +16,8 @@ async def sign_up(request: SignUpRequest) -> User:
 @router.post("/login", response_model=TokenResponse)
 async def login(request: LoginRequest) -> TokenResponse:
     return auth_service.login(request)
+
+
+@router.post("/social-login", response_model=TokenResponse)
+async def social_login(request: SocialLoginRequest) -> TokenResponse:
+    return auth_service.social_login(request)

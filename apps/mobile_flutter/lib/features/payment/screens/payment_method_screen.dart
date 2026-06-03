@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:iamport_flutter/iamport_payment.dart';
 import 'package:iamport_flutter/model/payment_data.dart';
 import 'dart:convert';
-import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../../core/api/api_client.dart';
 import '../../../core/shared_data.dart'; // ⚠️ 경로 확인 필수!
 
 class PaymentMethodScreen extends StatefulWidget {
@@ -14,6 +14,7 @@ class PaymentMethodScreen extends StatefulWidget {
 }
 
 class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
+  final ApiClient _apiClient = ApiClient();
   List<Map<String, dynamic>> registeredMethods = [];
   String _mainMethodId = '';
 
@@ -89,49 +90,63 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
   // ➕ 결제 수단 추가 함수
   void _addPaymentMethod(String name, String type) async {
     final prefs = await SharedPreferences.getInstance();
-    final String userEmail = prefs.getString('userEmail') ?? "youngjin@ansan.ac.kr"; 
+    final String userId = prefs.getString('userId') ?? "";
     final String mockBillingKey = "test_billing_key_${DateTime.now().millisecondsSinceEpoch}";
 
+    if (userId.isEmpty) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('❌ 로그인 정보가 없습니다. 다시 로그인해주세요.'),
+            backgroundColor: Colors.red,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+      return;
+    }
+
     try {
-      final url = Uri.parse('http://10.0.2.2:3000/api/payment/register-key');
-      
-      final response = await http.post(
-        url,
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-          'email': userEmail,
-          'billingKey': mockBillingKey,
-        }),
+      await _apiClient.registerPaymentMethod(
+        userId: userId,
+        methodName: name,
+        billingKey: mockBillingKey,
       );
 
-      if (response.statusCode == 200) {
-        setState(() {
-          final newId = DateTime.now().millisecondsSinceEpoch.toString();
-          registeredMethods.add({
-            'id': newId,
-            'name': name,
-            'type': type,
-          });
-          if (registeredMethods.length == 1) {
-            _mainMethodId = newId;
-          }
+      setState(() {
+        final newId = DateTime.now().millisecondsSinceEpoch.toString();
+        registeredMethods.add({
+          'id': newId,
+          'name': name,
+          'type': type,
         });
-        
-        _savePaymentMethods(); // 💾 추가 후 영구 저장!
-        _updateSharedData();
-
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('✅ $name이(가) 성공적으로 등록되었습니다!'),
-              backgroundColor: Colors.green,
-              duration: const Duration(milliseconds: 2000),
-              behavior: SnackBarBehavior.floating,
-            ),
-          );
+        if (registeredMethods.length == 1) {
+          _mainMethodId = newId;
         }
-      } else {
-        throw Exception('서버 응답 실패');
+      });
+      
+      _savePaymentMethods(); // 💾 추가 후 영구 저장!
+      _updateSharedData();
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('✅ $name이(가) 성공적으로 등록되었습니다!'),
+            backgroundColor: Colors.green,
+            duration: const Duration(milliseconds: 2000),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+    } on ApiException catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('❌ ${e.message}'),
+            backgroundColor: Colors.red,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
       }
     } catch (e) {
       print("❌ 서버 전송 에러: $e");

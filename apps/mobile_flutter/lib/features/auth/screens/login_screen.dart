@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
-import 'dart:convert';
-import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart'; 
 import 'package:google_sign_in/google_sign_in.dart'; 
 import 'package:provider/provider.dart'; 
 
 // ⚠️ 본인의 폴더 구조에 맞게 경로 확인 필수!
+import '../../../core/api/api_client.dart';
 import 'signup_screen.dart'; 
 import '../../parking/screens/main_navigation_screen.dart'; 
 import '../../../core/shared_data.dart'; 
@@ -20,6 +18,8 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  final ApiClient _apiClient = ApiClient();
+
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _isPasswordVisible = false;
@@ -41,68 +41,48 @@ class _LoginScreenState extends State<LoginScreen> {
       return;
     }
 
-    // 로딩창 띄우기
+    var loadingDialogOpen = false;
     showDialog(context: context, barrierDismissible: false, builder: (context) => const Center(child: CircularProgressIndicator()));
+    loadingDialogOpen = true;
 
     try {
-      final url = Uri.parse('http://10.0.2.2:3000/api/login');
-      final response = await http.post(
-        url,
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-          'email': _emailController.text.trim(),
-          'password': _passwordController.text.trim(),
-        }),
+      final result = await _apiClient.login(
+        email: _emailController.text.trim(),
+        password: _passwordController.text.trim(),
       );
 
       if (!mounted) return;
       // 🔥 팀킬 방지: 앱 화면이 아닌 팝업(Loading)만 정확히 닫기!
-      Navigator.of(context, rootNavigator: true).pop();
+      if (loadingDialogOpen) {
+        Navigator.of(context, rootNavigator: true).pop();
+        loadingDialogOpen = false;
+      }
 
-      final result = jsonDecode(response.body);
-      
       // 로그인 성공 시!
-      if (response.statusCode == 200 && result['success'] == true) {
-        final userData = result['user'];
-        final dbVehicle = userData['registeredVehicle'] ?? "등록된 차량 없음";
-        
-        final userName = userData['name'] ?? "사용자";
-        final userEmail = userData['email'] ?? _emailController.text.trim();
-        final userDept = userData['department'] ?? ""; // 소속은 빈칸으로
-
-        SharedData.vehicleNumber.value = dbVehicle;
-
-        // Provider에 실시간 프로필 정보 세팅
-        Provider.of<UserProvider>(context, listen: false).setUser(
-          name: userName,
-          email: userEmail,
-          department: userDept,
+      if (result['access_token'] != null && result['user_id'] != null) {
+        final user = await _apiClient.getUser(result['user_id']);
+        await _finishLogin(
+          userId: result['user_id'],
+          name: user['name'] ?? '사용자',
+          email: user['email'] ?? _emailController.text.trim(),
+          vehicleNumber: '등록된 차량 없음',
         );
-
-        final prefs = await SharedPreferences.getInstance();
-        if (_isAutoLoginChecked) {
-          await prefs.setBool('isLoggedIn', true);
-          await prefs.setString('registeredVehicle', dbVehicle);
-          await prefs.setString('userName', userName);
-          await prefs.setString('userEmail', userEmail);
-          await prefs.setString('userDept', userDept);
-        } else {
-          await prefs.setBool('isLoggedIn', false);
-          await prefs.remove('registeredVehicle');
-          await prefs.remove('userName');
-          await prefs.remove('userEmail');
-          await prefs.remove('userDept');
-        }
-
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const MainNavigationScreen()));
       } else {
         // 실패 (비밀번호 틀림 등)
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('❌ 실패: ${result['message']}'), backgroundColor: Colors.redAccent));
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('❌ 실패: 로그인 실패'), backgroundColor: Colors.redAccent));
       }
+    } on ApiException catch (e) {
+      if (!mounted) return;
+      if (loadingDialogOpen) {
+        Navigator.of(context, rootNavigator: true).pop();
+      }
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('❌ 실패: ${e.message}'), backgroundColor: Colors.redAccent));
     } catch (e) {
       if (!mounted) return;
       // 🔥 에러 시에도 팝업만 정확히 닫기!
-      Navigator.of(context, rootNavigator: true).pop();
+      if (loadingDialogOpen) {
+        Navigator.of(context, rootNavigator: true).pop();
+      }
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('⚠️ 서버 접속 실패. 서버 상태를 확인해주세요.')));
     }
   }
@@ -111,90 +91,107 @@ class _LoginScreenState extends State<LoginScreen> {
   // ✅ 2. 구글 연동 로그인
   // ------------------------------------------------------------------------
   Future<void> _handleGoogleLogin() async {
+    var loadingDialogOpen = false;
+
     try {
       final GoogleSignIn googleSignIn = GoogleSignIn();
       await googleSignIn.signOut(); // 계정 선택 창 강제 호출
       final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
       
       if (googleUser == null) return; 
+      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+      final String? idToken = googleAuth.idToken;
+
+      if (idToken == null) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('⚠️ 구글 ID 토큰을 받을 수 없습니다.')));
+        }
+        return;
+      }
 
       if (!mounted) return;
-      // 로딩창 띄우기
       showDialog(context: context, barrierDismissible: false, builder: (context) => const Center(child: CircularProgressIndicator()));
+      loadingDialogOpen = true;
 
-      final url = Uri.parse('http://10.0.2.2:3000/api/google-login');
-      final response = await http.post(
-        url,
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-          'email': googleUser.email,
-          'name': googleUser.displayName ?? '구글 유저',
-          'uid': googleUser.id,
-        }),
+      final result = await _apiClient.socialLogin(
+        provider: 'google',
+        token: idToken,
       );
 
       if (!mounted) return;
       // 🔥 팀킬 방지: 앱 화면이 아닌 팝업(Loading)만 정확히 닫기!
-      Navigator.of(context, rootNavigator: true).pop();
-
-      final result = jsonDecode(response.body);
-      
-      // 서버 통신 성공 시!
-      if (response.statusCode == 200 && result['success'] == true) {
-        final userData = result['user'];
-        final dbVehicle = userData['registeredVehicle'] ?? "등록된 차량 없음";
-        
-        final userName = userData['name'] ?? googleUser.displayName ?? "구글 유저";
-        final userEmail = userData['email'] ?? googleUser.email;
-        final userDept = userData['department'] ?? "";
-
-        SharedData.vehicleNumber.value = dbVehicle;
-
-        Provider.of<UserProvider>(context, listen: false).setUser(
-          name: userName,
-          email: userEmail,
-          department: userDept,
-        );
-
-        final prefs = await SharedPreferences.getInstance();
-        if (_isAutoLoginChecked) {
-          await prefs.setBool('isLoggedIn', true);
-          await prefs.setString('registeredVehicle', dbVehicle);
-          await prefs.setString('userName', userName);
-          await prefs.setString('userEmail', userEmail);
-          await prefs.setString('userDept', userDept);
-        } else {
-          await prefs.setBool('isLoggedIn', false);
-          await prefs.remove('registeredVehicle');
-          await prefs.remove('userName');
-          await prefs.remove('userEmail');
-          await prefs.remove('userDept');
-        }
-
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const MainNavigationScreen()));
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('❌ 구글 로그인 실패: ${result['message']}')));
+      if (loadingDialogOpen) {
+        Navigator.of(context, rootNavigator: true).pop();
+        loadingDialogOpen = false;
       }
+      // 서버 통신 성공 시!
+      if (result['access_token'] != null && result['user_id'] != null) {
+        final user = await _apiClient.getUser(result['user_id']);
+        await _finishLogin(
+          userId: result['user_id'],
+          name: user['name'] ?? googleUser.displayName ?? '구글 유저',
+          email: user['email'] ?? googleUser.email,
+          vehicleNumber: '등록된 차량 없음',
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('❌ 구글 로그인 실패: 토큰 검증 실패')));
+      }
+    } on ApiException catch (e) {
+      if (!mounted) return;
+      if (loadingDialogOpen) {
+        Navigator.of(context, rootNavigator: true).pop();
+      }
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('❌ 구글 로그인 실패: ${e.message}')));
     } catch (e) {
       if (!mounted) return;
       // 🔥 에러 시에도 팝업만 정확히 닫기!
-      Navigator.of(context, rootNavigator: true).pop();
+      if (loadingDialogOpen) {
+        Navigator.of(context, rootNavigator: true).pop();
+      }
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('⚠️ 구글 로그인 에러 (서버 연결을 확인하세요)')));
     }
   }
 
-  Future<void> _launchSocialLoginUrl(String provider) async {
-    String urlString = '';
-    switch (provider) {
-      case '카카오톡': urlString = 'https://accounts.kakao.com/login'; break;
-      case '애플': urlString = 'https://appleid.apple.com/sign-in'; break;
+  void _showProviderSetupMessage(String provider) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('$provider 로그인은 앱 키와 SDK 설정 후 연결할 수 있습니다.')),
+    );
+  }
+
+  Future<void> _finishLogin({
+    required String userId,
+    required String name,
+    required String email,
+    required String vehicleNumber,
+  }) async {
+    SharedData.vehicleNumber.value = vehicleNumber;
+
+    Provider.of<UserProvider>(context, listen: false).setUser(
+      id: userId,
+      name: name,
+      email: email,
+      department: '',
+    );
+
+    final prefs = await SharedPreferences.getInstance();
+    if (_isAutoLoginChecked) {
+      await prefs.setBool('isLoggedIn', true);
+      await prefs.setString('userId', userId);
+      await prefs.setString('registeredVehicle', vehicleNumber);
+      await prefs.setString('userName', name);
+      await prefs.setString('userEmail', email);
+      await prefs.setString('userDept', '');
+    } else {
+      await prefs.setBool('isLoggedIn', false);
+      await prefs.remove('userId');
+      await prefs.remove('registeredVehicle');
+      await prefs.remove('userName');
+      await prefs.remove('userEmail');
+      await prefs.remove('userDept');
     }
-    final Uri url = Uri.parse(urlString);
-    try {
-      await launchUrl(url, mode: LaunchMode.inAppWebView);
-    } catch (e) {
-      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('⚠️ $provider 열기 실패')));
-    }
+
+    if (!mounted) return;
+    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const MainNavigationScreen()));
   }
 
   @override
@@ -316,7 +313,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     _buildSocialButton(
-                      bgColor: const Color(0xFFFEE500), onTap: () => _launchSocialLoginUrl('카카오톡'),
+                      bgColor: const Color(0xFFFEE500), onTap: () => _showProviderSetupMessage('카카오'),
                       child: Padding(padding: const EdgeInsets.all(12.0), child: Image.asset('assets/images/kakao.png')),
                     ),
                     const SizedBox(width: 24),
@@ -327,8 +324,8 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     const SizedBox(width: 24),
                     _buildSocialButton(
-                      bgColor: Colors.black, onTap: () => _launchSocialLoginUrl('애플'),
-                      child: const Icon(Icons.apple, color: Colors.white, size: 30),
+                      bgColor: const Color(0xFF03C75A), onTap: () => _showProviderSetupMessage('네이버'),
+                      child: const Text('N', style: TextStyle(color: Colors.white, fontSize: 26, fontWeight: FontWeight.w900)),
                     ),
                   ],
                 ),
