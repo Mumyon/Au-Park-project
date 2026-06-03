@@ -154,7 +154,7 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  // 🔴 [상태 1] 주차 중이 아닐 때 보여줄 텅 빈 화면 (버튼 제거 버전)
+  // 🔴 [상태 1] 주차 중이 아닐 때 보여줄 텅 빈 화면
   Widget _buildNotParkingState(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
@@ -283,38 +283,91 @@ class HomeScreen extends StatelessWidget {
                   borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
                 ),
                 builder: (BuildContext context) {
-                  return Padding(
-                    padding: const EdgeInsets.all(24.0),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text('결제 수단 선택', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                        const SizedBox(height: 8),
-                        Text('[$currentVehicle] 차량의 주차 요금 3,500원이 자동 결제됩니다.', style: const TextStyle(color: Colors.grey)),
-                        const SizedBox(height: 24),
-                        
-                        ListTile(
-                          contentPadding: EdgeInsets.zero,
-                          leading: const Icon(Icons.credit_card, color: Colors.blue, size: 32),
-                          title: const Text('신한카드 (Deep Dream)', style: TextStyle(fontWeight: FontWeight.bold)),
-                          subtitle: const Text('****-****-****-1234'),
-                          trailing: const Icon(Icons.chevron_right),
-                          onTap: () => _processDirectPayment(context, '신한카드'),
+                  // 🔥 결제 수단 전역 상태를 실시간으로 감지하여 화면 구성!
+                  return ValueListenableBuilder<String>(
+                    valueListenable: SharedData.paymentMethod,
+                    builder: (context, paymentName, child) {
+                      final hasPaymentMethod = paymentName != '등록된 결제 수단 없음' && paymentName.isNotEmpty;
+                      final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
+                      return Padding(
+                        padding: const EdgeInsets.all(24.0),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text('사전 정산 결제', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                            const SizedBox(height: 8),
+                            Text('[$currentVehicle] 차량의 주차 요금 3,500원을 정산합니다.', style: const TextStyle(color: Colors.grey)),
+                            const SizedBox(height: 24),
+                            
+                            // 카드가 등록되어 있을 때의 UI
+                            if (hasPaymentMethod) ...[
+                              ListTile(
+                                contentPadding: EdgeInsets.zero,
+                                leading: const Icon(Icons.credit_card, color: Colors.blueAccent, size: 36),
+                                title: Text(paymentName, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                                subtitle: const Text('현재 주 결제 수단'),
+                                trailing: const Icon(Icons.check_circle, color: Colors.green),
+                                onTap: () => _processDirectPayment(context, paymentName),
+                              ),
+                              const SizedBox(height: 16),
+                              ElevatedButton(
+                                onPressed: () => _processDirectPayment(context, paymentName),
+                                style: ElevatedButton.styleFrom(
+                                  minimumSize: const Size(double.infinity, 56),
+                                  backgroundColor: Theme.of(context).primaryColor,
+                                  foregroundColor: Colors.white,
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                                  elevation: 0,
+                                ),
+                                child: const Text('3,500원 결제하기', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                              ),
+                            ] 
+                            // 카드가 등록되어 있지 않을 때의 UI
+                            else ...[
+                              Container(
+                                padding: const EdgeInsets.all(16),
+                                decoration: BoxDecoration(
+                                  color: isDarkMode ? Colors.grey.shade800 : Colors.grey.shade100,
+                                  borderRadius: BorderRadius.circular(12)
+                                ),
+                                child: const Row(
+                                  children: [
+                                    Icon(Icons.warning_amber_rounded, color: Colors.orange, size: 28),
+                                    SizedBox(width: 12),
+                                    Expanded(
+                                      child: Text(
+                                        '등록된 주 결제 수단이 없습니다.\n자동 정산을 위해 카드를 먼저 등록해주세요.',
+                                        style: TextStyle(height: 1.5),
+                                      ),
+                                    ),
+                                  ],
+                                )
+                              ),
+                              const SizedBox(height: 20),
+                              ElevatedButton.icon(
+                                onPressed: () {
+                                  Navigator.pop(context); // 바텀시트 닫기
+                                  // 결제 수단 관리 화면으로 이동!
+                                  Navigator.push(context, MaterialPageRoute(builder: (context) => const PaymentMethodScreen()));
+                                },
+                                icon: const Icon(Icons.add_card),
+                                label: const Text('결제 수단 등록하러 가기', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                                style: ElevatedButton.styleFrom(
+                                  minimumSize: const Size(double.infinity, 56),
+                                  backgroundColor: isDarkMode ? Colors.grey.shade700 : Colors.black87,
+                                  foregroundColor: Colors.white,
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                                  elevation: 0,
+                                ),
+                              ),
+                            ],
+                            const SizedBox(height: 10),
+                          ],
                         ),
-                        const Divider(),
-                        
-                        ListTile(
-                          contentPadding: EdgeInsets.zero,
-                          leading: const Icon(Icons.account_balance_wallet, color: Colors.yellow, size: 32),
-                          title: const Text('카카오페이', style: TextStyle(fontWeight: FontWeight.bold)),
-                          subtitle: const Text('간편결제'),
-                          trailing: const Icon(Icons.chevron_right),
-                          onTap: () => _processDirectPayment(context, '카카오페이'),
-                        ),
-                        const SizedBox(height: 24),
-                      ],
-                    ),
+                      );
+                    },
                   );
                 },
               );

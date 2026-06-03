@@ -8,5 +8,5 @@ class SharedData {
   static final ValueNotifier<bool> isCurrentlyParked = ValueNotifier<bool>(true);
 
   // 💳 등록된 대표 결제 수단 관리 (기본값 설정)
-  static final ValueNotifier<String> paymentMethod = ValueNotifier<String>("신한카드 (끝자리: 1234)");
+  static final ValueNotifier<String> paymentMethod = ValueNotifier<String>("등록된 결제 수단 없음");
 }

@@ -17,8 +17,46 @@ import '../../support/screens/notice_screen.dart';
 import '../../support/screens/faq_screen.dart';
 import '../../support/screens/settings_screen.dart';
 
-class MyPageScreen extends StatelessWidget {
+// 🚀 화면 켜질 때 상태를 업데이트하기 위해 StatefulWidget으로 변경!
+class MyPageScreen extends StatefulWidget {
   const MyPageScreen({super.key});
+
+  @override
+  State<MyPageScreen> createState() => _MyPageScreenState();
+}
+
+class _MyPageScreenState extends State<MyPageScreen> {
+
+  @override
+  void initState() {
+    super.initState();
+    // 마이페이지가 열리자마자 저장소에서 진짜 카드 정보를 불러와 동기화합니다.
+    _syncPaymentMethodFromStorage();
+  }
+
+  // 💾 기기 저장소를 확인해서 SharedData(전역 상태)를 덮어쓰는 함수
+  Future<void> _syncPaymentMethodFromStorage() async {
+    final prefs = await SharedPreferences.getInstance();
+    final savedMethods = prefs.getString('saved_cards');
+    final savedMainId = prefs.getString('main_card_id');
+
+    if (savedMethods != null) {
+      final List<dynamic> decoded = jsonDecode(savedMethods);
+      final methods = List<Map<String, dynamic>>.from(decoded);
+      
+      if (methods.isNotEmpty) {
+        final mainMethod = methods.firstWhere(
+          (m) => m['id'] == savedMainId,
+          orElse: () => methods[0],
+        );
+        // 저장된 진짜 카드 이름으로 업데이트!
+        SharedData.paymentMethod.value = mainMethod['name'];
+        return;
+      }
+    }
+    // 저장된 카드가 없으면 깔끔하게 없음으로 처리
+    SharedData.paymentMethod.value = '등록된 결제 수단 없음';
+  }
 
   // ------------------------------------------------------------------------
   // 🚪 로그아웃 처리 함수
