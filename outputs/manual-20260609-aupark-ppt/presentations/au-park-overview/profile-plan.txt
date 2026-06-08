@@ -1,0 +1,8 @@
+task mode: create
+primary deck-profile: engineering-platform
+secondary profile gates: product-platform
+required proof objects: system architecture map, social auth flow, LPR auto flow, fee/prepayment calculation flow, test/deployment workflow
+source/asset requirements: project_overview.html and local app_icon_128.jpg
+brand authenticity constraints: use the existing app icon only; do not invent an external logo
+profile-specific QA gates: diagrams must be legible at thumbnail scale, commands must be readable, architecture labels must match the project structure
+known missing inputs: no live screenshots supplied, so slides use editable system diagrams rather than app screenshots

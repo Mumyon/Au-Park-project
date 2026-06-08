@@ -4,6 +4,7 @@ from app.schemas.payment import Payment, PaymentMethodCreateRequest, PaymentRequ
 from app.schemas.parking import ParkingSessionStatus
 from app.services.auth_service import auth_service
 from app.services.parking_fee import calculate_parking_fee
+from app.services.parking_payment_matcher import normalize_plate, payment_matches_session
 from app.services.repository import InMemoryRepository, repository
 from app.services.vehicle_service import vehicle_service
 
@@ -32,16 +33,19 @@ class PaymentService:
             vehicle = vehicle_service.get(vehicle_id)
             plate_number = plate_number or vehicle.plate_number
         elif plate_number:
+            normalized_request_plate = normalize_plate(plate_number)
             matched_vehicle = next(
                 (
                     vehicle
                     for vehicle in self.repo.vehicles.values()
-                    if vehicle.user_id == request.user_id and vehicle.plate_number == plate_number
+                    if vehicle.user_id == request.user_id
+                    and normalize_plate(vehicle.plate_number) == normalized_request_plate
                 ),
                 None,
             )
             vehicle_id = matched_vehicle.id if matched_vehicle else None
 
+        normalized_plate = normalize_plate(plate_number)
         active_session = next(
             (
                 session
@@ -50,7 +54,10 @@ class PaymentService:
                 and session.status == ParkingSessionStatus.active
                 and (
                     (vehicle_id and session.vehicle_id == vehicle_id)
-                    or (plate_number and session.plate_number == plate_number)
+                    or (
+                        normalized_plate
+                        and normalize_plate(session.plate_number) == normalized_plate
+                    )
                 )
             ),
             None,
@@ -62,9 +69,7 @@ class PaymentService:
             already_paid = sum(
                 payment.amount
                 for payment in self.repo.payments.values()
-                if payment.status == PaymentStatus.paid
-                and payment.user_id == request.user_id
-                and self._payment_matches_session(payment, active_session)
+                if payment_matches_session(payment, active_session)
             )
             amount = max(0, total_fee - already_paid)
 
@@ -134,18 +139,6 @@ class PaymentService:
         if updated != payment:
             self.repo.payments[updated.id] = updated
         return updated
-
-    def _payment_matches_session(self, payment: Payment, session) -> bool:
-        payment_exit_at = self._as_aware_utc(payment.exit_at)
-        if payment_exit_at is None or payment_exit_at < self._as_aware_utc(session.entry_at):
-            return False
-        if payment.lot_id and payment.lot_id != session.lot_id:
-            return False
-        if payment.vehicle_id and payment.vehicle_id != session.vehicle_id:
-            return False
-        if payment.plate_number and payment.plate_number != session.plate_number:
-            return False
-        return bool(payment.vehicle_id or payment.plate_number)
 
     @staticmethod
     def _as_aware_utc(value: datetime | None) -> datetime | None:

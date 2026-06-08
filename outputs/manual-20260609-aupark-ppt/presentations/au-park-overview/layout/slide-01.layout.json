@@ -1,0 +1,1478 @@
+{
+  "schema": "openai.presentation.layout/v4",
+  "unit": "px",
+  "slide": {
+    "aid": "sl/8tsbm4",
+    "id": "8tsbm4",
+    "slide": 1,
+    "layoutId": "f85bb6e5-cf67-4444-84f7-bc7f61493453",
+    "layoutName": "Title Slide",
+    "layoutType": "title",
+    "masterLayoutId": "f708bf32-4787-4e4e-9f94-2d063c2129c5",
+    "masterLayoutName": "Master",
+    "frame": {
+      "left": 0,
+      "top": 0,
+      "width": 1280,
+      "height": 720
+    }
+  },
+  "theme": {
+    "colorSchemeName": "ChatGPT",
+    "colors": {
+      "accent1": "#156082",
+      "accent2": "#E97132",
+      "accent3": "#196B24",
+      "accent4": "#0F9ED5",
+      "accent5": "#A02B93",
+      "accent6": "#4EA72E",
+      "bg1": "#FFFFFF",
+      "bg2": "#000000",
+      "tx1": "#1F1F1F",
+      "tx2": "#FFFFFF",
+      "dk1": "#000000",
+      "lt1": "#FFFFFF",
+      "dk2": "#0E2841",
+      "lt2": "#E8E8E8",
+      "hlink": "#467886",
+      "folHlink": "#96607D"
+    },
+    "typefaces": [
+      "Apple SD Gothic Neo",
+      "Aptos"
+    ]
+  },
+  "inheritedLayers": [
+    {
+      "scope": "layout",
+      "id": "f85bb6e5-cf67-4444-84f7-bc7f61493453",
+      "name": "Title Slide",
+      "type": "title",
+      "parentLayoutId": "f708bf32-4787-4e4e-9f94-2d063c2129c5",
+      "elements": []
+    },
+    {
+      "scope": "master",
+      "id": "f708bf32-4787-4e4e-9f94-2d063c2129c5",
+      "name": "Master",
+      "type": "master",
+      "elements": []
+    }
+  ],
+  "elements": [
+    {
+      "order": 1,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/mtwra5gb",
+      "id": "1",
+      "bbox": [
+        0,
+        0,
+        1280,
+        720
+      ],
+      "geometry": "rect",
+      "fillColor": "#FFFFFF",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 2,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/xkf6dcbu",
+      "id": "2",
+      "bbox": [
+        0,
+        0,
+        1280,
+        18
+      ],
+      "geometry": "rect",
+      "fillColor": "#083B68",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 3,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/4zidonyd",
+      "id": "3",
+      "bbox": [
+        0,
+        18,
+        870.4,
+        5
+      ],
+      "geometry": "rect",
+      "fillColor": "#0B4F8A",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 4,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/f6dcbulw",
+      "id": "4",
+      "bbox": [
+        870.4,
+        18,
+        409.6,
+        5
+      ],
+      "geometry": "rect",
+      "fillColor": "#159A82",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 5,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/mlkjm1cf",
+      "id": "5",
+      "bbox": [
+        0,
+        0,
+        470,
+        720
+      ],
+      "geometry": "rect",
+      "fillColor": "#083B68",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 6,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/xc3ylc7u",
+      "id": "6",
+      "bbox": [
+        470,
+        0,
+        120,
+        720
+      ],
+      "geometry": "rect",
+      "fillColor": "#0B4F8A",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 7,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/4r65wjud",
+      "id": "7",
+      "bbox": [
+        590,
+        0,
+        46,
+        720
+      ],
+      "geometry": "rect",
+      "fillColor": "#159A82",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 8,
+      "kind": "image",
+      "scope": "slide",
+      "aid": "im/61032lsz",
+      "id": "8",
+      "bbox": [
+        64,
+        72,
+        86,
+        86
+      ],
+      "alt": "Au-Park app icon",
+      "contentType": "image/jpeg",
+      "imageFit": "contain",
+      "asset": {
+        "assetId": "75a261ce-3553-4907-9fff-50e1a0295a7a",
+        "contentType": "image/jpeg",
+        "byteLength": 6062
+      }
+    },
+    {
+      "order": 9,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/m94fu18j",
+      "id": "9",
+      "bbox": [
+        64,
+        196,
+        360,
+        70
+      ],
+      "geometry": "rect",
+      "text": "Au-Park",
+      "textPreview": "Au-Park",
+      "resolvedFontSize": 50,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 50,
+        "typeface": "Apple SD Gothic Neo",
+        "color": "#FFFFFF",
+        "bold": true,
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Au-Park"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Au-Park",
+          "resolvedTextStyle": {
+            "fontSize": 50,
+            "typeface": "Apple SD Gothic Neo",
+            "color": "#FFFFFF",
+            "bold": true,
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Au-Park",
+              "fontSize": 50,
+              "typeface": "Apple SD Gothic Neo",
+              "color": "#FFFFFF",
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 10,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/sji5snel",
+      "id": "10",
+      "bbox": [
+        66,
+        270,
+        335,
+        32
+      ],
+      "geometry": "rect",
+      "text": "스마트 주차 시스템 프로젝트 발표",
+      "textPreview": "스마트 주차 시스템 프로젝트 발표",
+      "resolvedFontSize": 18,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 18,
+        "typeface": "Apple SD Gothic Neo",
+        "color": "rgba(255, 255, 255, 0.86)",
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "스마트 주차 시스템 프로젝트 발표"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "스마트 주차 시스템 프로젝트 발표",
+          "resolvedTextStyle": {
+            "fontSize": 18,
+            "typeface": "Apple SD Gothic Neo",
+            "color": "rgba(255, 255, 255, 0.86)",
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "스마트 주차 시스템 프로젝트 발표",
+              "fontSize": 18,
+              "typeface": "Apple SD Gothic Neo",
+              "color": "rgba(255, 255, 255, 0.86)"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 11,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/h4byhgn2",
+      "id": "11",
+      "bbox": [
+        690,
+        94,
+        470,
+        118
+      ],
+      "geometry": "rect",
+      "text": "Flutter 앱, FastAPI 서버, OpenCV 비전 워커를 연결해 차량 등록부터 번호판 인식 입출차와 자동정산까지 처리하는 테스트 가능한 시스템입니다.",
+      "textPreview": "Flutter 앱, FastAPI 서버, OpenCV 비전 워커를 연결해 차량 등록부터 번호판 인식 입출차와 자동정산까지 처리하는 테스트 가능한 시스템입니다.",
+      "resolvedFontSize": 25,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 25,
+        "typeface": "Apple SD Gothic Neo",
+        "color": "#17202A",
+        "bold": true,
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 4,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Flutter 앱, FastAPI 서버, OpenCV 비전"
+          },
+          {
+            "index": 2,
+            "text": "워커를 연결해 차량 등록부터 번호판 인식"
+          },
+          {
+            "index": 3,
+            "text": "입출차와 자동정산까지 처리하는 테스트 가능한"
+          },
+          {
+            "index": 4,
+            "text": "시스템입니다."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Flutter 앱, FastAPI 서버, OpenCV 비전 워커를 연결해 차량 등록부터 번호판 인식 입출차와 자동정산까지 처리하는 테스트 가능한 시스템입니다.",
+          "resolvedTextStyle": {
+            "fontSize": 25,
+            "typeface": "Apple SD Gothic Neo",
+            "color": "#17202A",
+            "bold": true,
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Flutter 앱, FastAPI 서버, OpenCV 비전 워커를 연결해 차량 등록부터 번호판 인식 입출차와 자동정산까지 처리하는 테스트 가능한 시스템입니다.",
+              "fontSize": 25,
+              "typeface": "Apple SD Gothic Neo",
+              "color": "#17202A",
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 12,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/adsji5sn",
+      "id": "12",
+      "bbox": [
+        690,
+        268,
+        158,
+        105
+      ],
+      "geometry": "rect",
+      "fillColor": "#FFFFFF",
+      "lineColor": "#DDE4EC",
+      "lineWidth": 1
+    },
+    {
+      "order": 13,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/3ylc7u54",
+      "id": "13",
+      "bbox": [
+        708,
+        283,
+        122,
+        42
+      ],
+      "geometry": "rect",
+      "text": "3",
+      "textPreview": "3",
+      "resolvedFontSize": 31,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 31,
+        "typeface": "Apple SD Gothic Neo",
+        "color": "#0B4F8A",
+        "bold": true,
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "3"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "3",
+          "resolvedTextStyle": {
+            "fontSize": 31,
+            "typeface": "Apple SD Gothic Neo",
+            "color": "#0B4F8A",
+            "bold": true,
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "3",
+              "fontSize": 31,
+              "typeface": "Apple SD Gothic Neo",
+              "color": "#0B4F8A",
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 14,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/s72x4nap",
+      "id": "14",
+      "bbox": [
+        708,
+        328,
+        122,
+        36
+      ],
+      "geometry": "rect",
+      "text": "핵심 구성\nApp / API / Vision",
+      "textPreview": "핵심 구성 | App / API / Vision",
+      "resolvedFontSize": 13,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 13,
+        "typeface": "Apple SD Gothic Neo",
+        "color": "#5F6C7B",
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 2,
+        "lines": [
+          {
+            "index": 1,
+            "text": "핵심 구성"
+          },
+          {
+            "index": 2,
+            "text": "App / API / Vision"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "핵심 구성",
+          "resolvedTextStyle": {
+            "fontSize": 13,
+            "typeface": "Apple SD Gothic Neo",
+            "color": "#5F6C7B",
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "핵심 구성",
+              "fontSize": 13,
+              "typeface": "Apple SD Gothic Neo",
+              "color": "#5F6C7B"
+            }
+          ],
+          "marginLeft": 0
+        },
+        {
+          "index": 2,
+          "text": "App / API / Vision",
+          "resolvedTextStyle": {
+            "fontSize": 13,
+            "typeface": "Apple SD Gothic Neo",
+            "color": "#5F6C7B",
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "App / API / Vision",
+              "fontSize": 13,
+              "typeface": "Apple SD Gothic Neo",
+              "color": "#5F6C7B"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 15,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/lszqtcj6",
+      "id": "15",
+      "bbox": [
+        868,
+        268,
+        158,
+        105
+      ],
+      "geometry": "rect",
+      "fillColor": "#FFFFFF",
+      "lineColor": "#DDE4EC",
+      "lineWidth": 1
+    },
+    {
+      "order": 16,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/a5gbq1or",
+      "id": "16",
+      "bbox": [
+        886,
+        283,
+        122,
+        42
+      ],
+      "geometry": "rect",
+      "text": "13",
+      "textPreview": "13",
+      "resolvedFontSize": 31,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 31,
+        "typeface": "Apple SD Gothic Neo",
+        "color": "#159A82",
+        "bold": true,
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "13"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "13",
+          "resolvedTextStyle": {
+            "fontSize": 31,
+            "typeface": "Apple SD Gothic Neo",
+            "color": "#159A82",
+            "bold": true,
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "13",
+              "fontSize": 31,
+              "typeface": "Apple SD Gothic Neo",
+              "color": "#159A82",
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 17,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/3m94fu18",
+      "id": "17",
+      "bbox": [
+        886,
+        328,
+        122,
+        36
+      ],
+      "geometry": "rect",
+      "text": "문서 섹션을\n발표 흐름으로 압축",
+      "textPreview": "문서 섹션을 | 발표 흐름으로 압축",
+      "resolvedFontSize": 13,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 13,
+        "typeface": "Apple SD Gothic Neo",
+        "color": "#5F6C7B",
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 2,
+        "lines": [
+          {
+            "index": 1,
+            "text": "문서 섹션을"
+          },
+          {
+            "index": 2,
+            "text": "발표 흐름으로 압축"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "문서 섹션을",
+          "resolvedTextStyle": {
+            "fontSize": 13,
+            "typeface": "Apple SD Gothic Neo",
+            "color": "#5F6C7B",
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "문서 섹션을",
+              "fontSize": 13,
+              "typeface": "Apple SD Gothic Neo",
+              "color": "#5F6C7B"
+            }
+          ],
+          "marginLeft": 0
+        },
+        {
+          "index": 2,
+          "text": "발표 흐름으로 압축",
+          "resolvedTextStyle": {
+            "fontSize": 13,
+            "typeface": "Apple SD Gothic Neo",
+            "color": "#5F6C7B",
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "발표 흐름으로 압축",
+              "fontSize": 13,
+              "typeface": "Apple SD Gothic Neo",
+              "color": "#5F6C7B"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 18,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/s36hcrmh",
+      "id": "18",
+      "bbox": [
+        1046,
+        268,
+        158,
+        105
+      ],
+      "geometry": "rect",
+      "fillColor": "#FFFFFF",
+      "lineColor": "#DDE4EC",
+      "lineWidth": 1
+    },
+    {
+      "order": 19,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/hoza1gvy",
+      "id": "19",
+      "bbox": [
+        1064,
+        283,
+        122,
+        42
+      ],
+      "geometry": "rect",
+      "text": "1",
+      "textPreview": "1",
+      "resolvedFontSize": 31,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 31,
+        "typeface": "Apple SD Gothic Neo",
+        "color": "#9A6B00",
+        "bold": true,
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "1"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "1",
+          "resolvedTextStyle": {
+            "fontSize": 31,
+            "typeface": "Apple SD Gothic Neo",
+            "color": "#9A6B00",
+            "bold": true,
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "1",
+              "fontSize": 31,
+              "typeface": "Apple SD Gothic Neo",
+              "color": "#9A6B00",
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 20,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/lkjm1cfa",
+      "id": "20",
+      "bbox": [
+        1064,
+        328,
+        122,
+        36
+      ],
+      "geometry": "rect",
+      "text": "현장 테스트 중심\nMacBook 서버",
+      "textPreview": "현장 테스트 중심 | MacBook 서버",
+      "resolvedFontSize": 13,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 13,
+        "typeface": "Apple SD Gothic Neo",
+        "color": "#5F6C7B",
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 2,
+        "lines": [
+          {
+            "index": 1,
+            "text": "현장 테스트 중심"
+          },
+          {
+            "index": 2,
+            "text": "MacBook 서버"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "현장 테스트 중심",
+          "resolvedTextStyle": {
+            "fontSize": 13,
+            "typeface": "Apple SD Gothic Neo",
+            "color": "#5F6C7B",
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "현장 테스트 중심",
+              "fontSize": 13,
+              "typeface": "Apple SD Gothic Neo",
+              "color": "#5F6C7B"
+            }
+          ],
+          "marginLeft": 0
+        },
+        {
+          "index": 2,
+          "text": "MacBook 서버",
+          "resolvedTextStyle": {
+            "fontSize": 13,
+            "typeface": "Apple SD Gothic Neo",
+            "color": "#5F6C7B",
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "MacBook 서버",
+              "fontSize": 13,
+              "typeface": "Apple SD Gothic Neo",
+              "color": "#5F6C7B"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 21,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/szqtcj6t",
+      "id": "21",
+      "bbox": [
+        690,
+        430,
+        92,
+        30
+      ],
+      "geometry": "rect",
+      "fillColor": "#E4EEF8",
+      "lineColor": "#D5E5F5",
+      "lineWidth": 1
+    },
+    {
+      "order": 22,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/3ex0nuxc",
+      "id": "22",
+      "bbox": [
+        700,
+        436,
+        72,
+        18
+      ],
+      "geometry": "rect",
+      "text": "Flutter",
+      "textPreview": "Flutter",
+      "resolvedFontSize": 11,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 11,
+        "typeface": "Apple SD Gothic Neo",
+        "color": "#0B4F8A",
+        "bold": true,
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Flutter"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Flutter",
+          "resolvedTextStyle": {
+            "fontSize": 11,
+            "typeface": "Apple SD Gothic Neo",
+            "color": "#0B4F8A",
+            "bold": true,
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Flutter",
+              "fontSize": 11,
+              "typeface": "Apple SD Gothic Neo",
+              "color": "#0B4F8A",
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 23,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/at47y1kr",
+      "id": "23",
+      "bbox": [
+        792,
+        430,
+        94,
+        30
+      ],
+      "geometry": "rect",
+      "fillColor": "#E4EEF8",
+      "lineColor": "#D5E5F5",
+      "lineWidth": 1
+    },
+    {
+      "order": 24,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/l87ed8ba",
+      "id": "24",
+      "bbox": [
+        802,
+        436,
+        74,
+        18
+      ],
+      "geometry": "rect",
+      "text": "FastAPI",
+      "textPreview": "FastAPI",
+      "resolvedFontSize": 11,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 11,
+        "typeface": "Apple SD Gothic Neo",
+        "color": "#0B4F8A",
+        "bold": true,
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "FastAPI"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "FastAPI",
+          "resolvedTextStyle": {
+            "fontSize": 11,
+            "typeface": "Apple SD Gothic Neo",
+            "color": "#0B4F8A",
+            "bold": true,
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "FastAPI",
+              "fontSize": 11,
+              "typeface": "Apple SD Gothic Neo",
+              "color": "#0B4F8A",
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 25,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/sneloj2t",
+      "id": "25",
+      "bbox": [
+        896,
+        430,
+        132,
+        30
+      ],
+      "geometry": "rect",
+      "fillColor": "#E4EEF8",
+      "lineColor": "#D5E5F5",
+      "lineWidth": 1
+    },
+    {
+      "order": 26,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/32lszqtc",
+      "id": "26",
+      "bbox": [
+        906,
+        436,
+        112,
+        18
+      ],
+      "geometry": "rect",
+      "text": "Firebase RTDB",
+      "textPreview": "Firebase RTDB",
+      "resolvedFontSize": 11,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 11,
+        "typeface": "Apple SD Gothic Neo",
+        "color": "#0B4F8A",
+        "bold": true,
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Firebase RTDB"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Firebase RTDB",
+          "resolvedTextStyle": {
+            "fontSize": 11,
+            "typeface": "Apple SD Gothic Neo",
+            "color": "#0B4F8A",
+            "bold": true,
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Firebase RTDB",
+              "fontSize": 11,
+              "typeface": "Apple SD Gothic Neo",
+              "color": "#0B4F8A",
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 27,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/ahoza1gv",
+      "id": "27",
+      "bbox": [
+        1038,
+        430,
+        154,
+        30
+      ],
+      "geometry": "rect",
+      "fillColor": "#E5F4F0",
+      "lineColor": "#CBE8E1",
+      "lineWidth": 1
+    },
+    {
+      "order": 28,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/lwval87e",
+      "id": "28",
+      "bbox": [
+        1048,
+        436,
+        134,
+        18
+      ],
+      "geometry": "rect",
+      "text": "OpenCV / EasyOCR",
+      "textPreview": "OpenCV / EasyOCR",
+      "resolvedFontSize": 11,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 11,
+        "typeface": "Apple SD Gothic Neo",
+        "color": "#159A82",
+        "bold": true,
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "OpenCV / EasyOCR"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "OpenCV / EasyOCR",
+          "resolvedTextStyle": {
+            "fontSize": 11,
+            "typeface": "Apple SD Gothic Neo",
+            "color": "#159A82",
+            "bold": true,
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "OpenCV / EasyOCR",
+              "fontSize": 11,
+              "typeface": "Apple SD Gothic Neo",
+              "color": "#159A82",
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 29,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/wb2hwfyx",
+      "id": "29",
+      "bbox": [
+        690,
+        622,
+        470,
+        28
+      ],
+      "geometry": "rect",
+      "text": "작성일 2026-06-09 · Repository: Au-Park-project",
+      "textPreview": "작성일 2026-06-09 · Repository: Au-Park-project",
+      "resolvedFontSize": 13,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 13,
+        "typeface": "Apple SD Gothic Neo",
+        "color": "#5F6C7B",
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "작성일 2026-06-09 · Repository: Au-Park-project"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "작성일 2026-06-09 · Repository: Au-Park-project",
+          "resolvedTextStyle": {
+            "fontSize": 13,
+            "typeface": "Apple SD Gothic Neo",
+            "color": "#5F6C7B",
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "작성일 2026-06-09 · Repository: Au-Park-project",
+              "fontSize": 13,
+              "typeface": "Apple SD Gothic Neo",
+              "color": "#5F6C7B"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 30,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/6dcbulwv",
+      "id": "30",
+      "bbox": [
+        56,
+        680,
+        420,
+        24
+      ],
+      "geometry": "rect",
+      "text": "Au-Park Project Overview",
+      "textPreview": "Au-Park Project Overview",
+      "resolvedFontSize": 12,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 12,
+        "typeface": "Aptos",
+        "color": "#5F6C7B",
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Au-Park Project Overview"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Au-Park Project Overview",
+          "resolvedTextStyle": {
+            "fontSize": 12,
+            "typeface": "Aptos",
+            "color": "#5F6C7B",
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Au-Park Project Overview",
+              "fontSize": 12,
+              "typeface": "Aptos",
+              "color": "#5F6C7B"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 31,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/vy90je9c",
+      "id": "31",
+      "bbox": [
+        1170,
+        678,
+        54,
+        28
+      ],
+      "geometry": "rect",
+      "text": "01",
+      "textPreview": "01",
+      "resolvedFontSize": 14,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 14,
+        "typeface": "Aptos",
+        "color": "#0B4F8A",
+        "bold": true,
+        "alignment": "right",
+        "verticalAlignment": "top",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "01"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "01",
+          "resolvedTextStyle": {
+            "fontSize": 14,
+            "typeface": "Aptos",
+            "color": "#0B4F8A",
+            "bold": true,
+            "alignment": "right"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "01",
+              "fontSize": 14,
+              "typeface": "Aptos",
+              "color": "#0B4F8A",
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    }
+  ],
+  "composeRuns": []
+}

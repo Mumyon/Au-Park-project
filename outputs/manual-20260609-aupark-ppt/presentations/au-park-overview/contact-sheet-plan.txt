@@ -1,0 +1,11 @@
+1. Cover with project thesis and component rail
+2. Problem/goal split with operating thesis
+3. Full architecture map
+4. Stack matrix
+5. Social authentication flow
+6. LPR automatic entry/exit flow
+7. Fee policy and prepayment deduction logic
+8. Mobile home status data contract
+9. Vision worker camera/OCR pipeline
+10. Local-to-internet test workflow
+11. Current limits and roadmap

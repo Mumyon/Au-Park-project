@@ -1,0 +1,1669 @@
+{
+  "schema": "openai.presentation.layout/v4",
+  "unit": "px",
+  "slide": {
+    "aid": "sl/zb9u3q",
+    "id": "zb9u3q",
+    "slide": 7,
+    "layoutId": "f85bb6e5-cf67-4444-84f7-bc7f61493453",
+    "layoutName": "Title Slide",
+    "layoutType": "title",
+    "masterLayoutId": "f708bf32-4787-4e4e-9f94-2d063c2129c5",
+    "masterLayoutName": "Master",
+    "frame": {
+      "left": 0,
+      "top": 0,
+      "width": 1280,
+      "height": 720
+    }
+  },
+  "theme": {
+    "colorSchemeName": "ChatGPT",
+    "colors": {
+      "accent1": "#156082",
+      "accent2": "#E97132",
+      "accent3": "#196B24",
+      "accent4": "#0F9ED5",
+      "accent5": "#A02B93",
+      "accent6": "#4EA72E",
+      "bg1": "#FFFFFF",
+      "bg2": "#000000",
+      "tx1": "#1F1F1F",
+      "tx2": "#FFFFFF",
+      "dk1": "#000000",
+      "lt1": "#FFFFFF",
+      "dk2": "#0E2841",
+      "lt2": "#E8E8E8",
+      "hlink": "#467886",
+      "folHlink": "#96607D"
+    },
+    "typefaces": [
+      "Apple SD Gothic Neo",
+      "Aptos"
+    ]
+  },
+  "inheritedLayers": [
+    {
+      "scope": "layout",
+      "id": "f85bb6e5-cf67-4444-84f7-bc7f61493453",
+      "name": "Title Slide",
+      "type": "title",
+      "parentLayoutId": "f708bf32-4787-4e4e-9f94-2d063c2129c5",
+      "elements": []
+    },
+    {
+      "scope": "master",
+      "id": "f708bf32-4787-4e4e-9f94-2d063c2129c5",
+      "name": "Master",
+      "type": "master",
+      "elements": []
+    }
+  ],
+  "elements": [
+    {
+      "order": 1,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/oj2t83it",
+      "id": "1",
+      "bbox": [
+        0,
+        0,
+        1280,
+        720
+      ],
+      "geometry": "rect",
+      "fillColor": "#EEF2F6",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 2,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/vy90je9c",
+      "id": "2",
+      "bbox": [
+        0,
+        0,
+        1280,
+        18
+      ],
+      "geometry": "rect",
+      "fillColor": "#083B68",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 3,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/6dcbulwv",
+      "id": "3",
+      "bbox": [
+        0,
+        18,
+        870.4,
+        5
+      ],
+      "geometry": "rect",
+      "fillColor": "#0B4F8A",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 4,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/dsji5sne",
+      "id": "4",
+      "bbox": [
+        870.4,
+        18,
+        409.6,
+        5
+      ],
+      "geometry": "rect",
+      "fillColor": "#159A82",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 5,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/o7qpg3ex",
+      "id": "5",
+      "bbox": [
+        56,
+        58,
+        420,
+        22
+      ],
+      "geometry": "rect",
+      "text": "FEE LOGIC",
+      "textPreview": "FEE LOGIC",
+      "resolvedFontSize": 12,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 12,
+        "typeface": "Aptos",
+        "color": "#159A82",
+        "bold": true,
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "FEE LOGIC"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "FEE LOGIC",
+          "resolvedTextStyle": {
+            "fontSize": 12,
+            "typeface": "Aptos",
+            "color": "#159A82",
+            "bold": true,
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "FEE LOGIC",
+              "fontSize": 12,
+              "typeface": "Aptos",
+              "color": "#159A82",
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 6,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/vmtwra5g",
+      "id": "6",
+      "bbox": [
+        56,
+        86,
+        1040,
+        96
+      ],
+      "geometry": "rect",
+      "text": "사전정산 직후 미정산 금액은 0원이 되어야 함",
+      "textPreview": "사전정산 직후 미정산 금액은 0원이 되어야 함",
+      "resolvedFontSize": 34,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 34,
+        "typeface": "Apple SD Gothic Neo",
+        "color": "#17202A",
+        "bold": true,
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "사전정산 직후 미정산 금액은 0원이 되어야 함"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "사전정산 직후 미정산 금액은 0원이 되어야 함",
+          "resolvedTextStyle": {
+            "fontSize": 34,
+            "typeface": "Apple SD Gothic Neo",
+            "color": "#17202A",
+            "bold": true,
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "사전정산 직후 미정산 금액은 0원이 되어야 함",
+              "fontSize": 34,
+              "typeface": "Apple SD Gothic Neo",
+              "color": "#17202A",
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 7,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/61032lsz",
+      "id": "7",
+      "bbox": [
+        58,
+        184,
+        880,
+        42
+      ],
+      "geometry": "rect",
+      "text": "현황판은 총요금에서 이미 낸 금액을 뺀 outstanding_fee를 보여주고, 출차 시에는 남은 차액만 자동결제합니다.",
+      "textPreview": "현황판은 총요금에서 이미 낸 금액을 뺀 outstanding_fee를 보여주고, 출차 시에는 남은 차액만 자동결제합니다.",
+      "resolvedFontSize": 16,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 16,
+        "typeface": "Apple SD Gothic Neo",
+        "color": "#5F6C7B",
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "현황판은 총요금에서 이미 낸 금액을 뺀 outstanding_fee를 보여주고, 출차 시에는 남은 차액만 자동결제합니다."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "현황판은 총요금에서 이미 낸 금액을 뺀 outstanding_fee를 보여주고, 출차 시에는 남은 차액만 자동결제합니다.",
+          "resolvedTextStyle": {
+            "fontSize": 16,
+            "typeface": "Apple SD Gothic Neo",
+            "color": "#5F6C7B",
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "현황판은 총요금에서 이미 낸 금액을 뺀 outstanding_fee를 보여주고, 출차 시에는 남은 차액만 자동결제합니다.",
+              "fontSize": 16,
+              "typeface": "Apple SD Gothic Neo",
+              "color": "#5F6C7B"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 8,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/dg7adsji",
+      "id": "8",
+      "bbox": [
+        70,
+        220,
+        240,
+        104
+      ],
+      "geometry": "rect",
+      "fillColor": "#FFFFFF",
+      "lineColor": "#DDE4EC",
+      "lineWidth": 1
+    },
+    {
+      "order": 9,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/ovahoza1",
+      "id": "9",
+      "bbox": [
+        88,
+        235,
+        204,
+        42
+      ],
+      "geometry": "rect",
+      "text": "0원",
+      "textPreview": "0원",
+      "resolvedFontSize": 31,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 31,
+        "typeface": "Apple SD Gothic Neo",
+        "color": "#159A82",
+        "bold": true,
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "0원"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "0원",
+          "resolvedTextStyle": {
+            "fontSize": 31,
+            "typeface": "Apple SD Gothic Neo",
+            "color": "#159A82",
+            "bold": true,
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "0원",
+              "fontSize": 31,
+              "typeface": "Apple SD Gothic Neo",
+              "color": "#159A82",
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 10,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/mtwra5gb",
+      "id": "10",
+      "bbox": [
+        88,
+        280,
+        204,
+        36
+      ],
+      "geometry": "rect",
+      "text": "입차 후 30분 이내",
+      "textPreview": "입차 후 30분 이내",
+      "resolvedFontSize": 13,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 13,
+        "typeface": "Apple SD Gothic Neo",
+        "color": "#5F6C7B",
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "입차 후 30분 이내"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "입차 후 30분 이내",
+          "resolvedTextStyle": {
+            "fontSize": 13,
+            "typeface": "Apple SD Gothic Neo",
+            "color": "#5F6C7B",
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "입차 후 30분 이내",
+              "fontSize": 13,
+              "typeface": "Apple SD Gothic Neo",
+              "color": "#5F6C7B"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 11,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/fepkzupw",
+      "id": "11",
+      "bbox": [
+        340,
+        220,
+        240,
+        104
+      ],
+      "geometry": "rect",
+      "fillColor": "#FFFFFF",
+      "lineColor": "#DDE4EC",
+      "lineWidth": 1
+    },
+    {
+      "order": 12,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/4zidonyd",
+      "id": "12",
+      "bbox": [
+        358,
+        235,
+        204,
+        42
+      ],
+      "geometry": "rect",
+      "text": "1,500원",
+      "textPreview": "1,500원",
+      "resolvedFontSize": 31,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 31,
+        "typeface": "Apple SD Gothic Neo",
+        "color": "#0B4F8A",
+        "bold": true,
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "1,500원"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "1,500원",
+          "resolvedTextStyle": {
+            "fontSize": 31,
+            "typeface": "Apple SD Gothic Neo",
+            "color": "#0B4F8A",
+            "bold": true,
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "1,500원",
+              "fontSize": 31,
+              "typeface": "Apple SD Gothic Neo",
+              "color": "#0B4F8A",
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 13,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/xkf6dcbu",
+      "id": "13",
+      "bbox": [
+        358,
+        280,
+        204,
+        36
+      ],
+      "geometry": "rect",
+      "text": "31~60분 기본요금",
+      "textPreview": "31~60분 기본요금",
+      "resolvedFontSize": 13,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 13,
+        "typeface": "Apple SD Gothic Neo",
+        "color": "#5F6C7B",
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "31~60분 기본요금"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "31~60분 기본요금",
+          "resolvedTextStyle": {
+            "fontSize": 13,
+            "typeface": "Apple SD Gothic Neo",
+            "color": "#5F6C7B",
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "31~60분 기본요금",
+              "fontSize": 13,
+              "typeface": "Apple SD Gothic Neo",
+              "color": "#5F6C7B"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 14,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/mlkjm1cf",
+      "id": "14",
+      "bbox": [
+        610,
+        220,
+        240,
+        104
+      ],
+      "geometry": "rect",
+      "fillColor": "#FFFFFF",
+      "lineColor": "#DDE4EC",
+      "lineWidth": 1
+    },
+    {
+      "order": 15,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/f6dcbulw",
+      "id": "15",
+      "bbox": [
+        628,
+        235,
+        204,
+        42
+      ],
+      "geometry": "rect",
+      "text": "+500원",
+      "textPreview": "+500원",
+      "resolvedFontSize": 31,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 31,
+        "typeface": "Apple SD Gothic Neo",
+        "color": "#9A6B00",
+        "bold": true,
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "+500원"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "+500원",
+          "resolvedTextStyle": {
+            "fontSize": 31,
+            "typeface": "Apple SD Gothic Neo",
+            "color": "#9A6B00",
+            "bold": true,
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "+500원",
+              "fontSize": 31,
+              "typeface": "Apple SD Gothic Neo",
+              "color": "#9A6B00",
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 16,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/4r65wjud",
+      "id": "16",
+      "bbox": [
+        628,
+        280,
+        204,
+        36
+      ],
+      "geometry": "rect",
+      "text": "61분부터 10분마다",
+      "textPreview": "61분부터 10분마다",
+      "resolvedFontSize": 13,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 13,
+        "typeface": "Apple SD Gothic Neo",
+        "color": "#5F6C7B",
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "61분부터 10분마다"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "61분부터 10분마다",
+          "resolvedTextStyle": {
+            "fontSize": 13,
+            "typeface": "Apple SD Gothic Neo",
+            "color": "#5F6C7B",
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "61분부터 10분마다",
+              "fontSize": 13,
+              "typeface": "Apple SD Gothic Neo",
+              "color": "#5F6C7B"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 17,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/xc3ylc7u",
+      "id": "17",
+      "bbox": [
+        880,
+        220,
+        240,
+        104
+      ],
+      "geometry": "rect",
+      "fillColor": "#FFFFFF",
+      "lineColor": "#DDE4EC",
+      "lineWidth": 1
+    },
+    {
+      "order": 18,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/m94fu18j",
+      "id": "18",
+      "bbox": [
+        898,
+        235,
+        204,
+        42
+      ],
+      "geometry": "rect",
+      "text": "15,000원",
+      "textPreview": "15,000원",
+      "resolvedFontSize": 31,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 31,
+        "typeface": "Apple SD Gothic Neo",
+        "color": "#17202A",
+        "bold": true,
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "15,000원"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "15,000원",
+          "resolvedTextStyle": {
+            "fontSize": 31,
+            "typeface": "Apple SD Gothic Neo",
+            "color": "#17202A",
+            "bold": true,
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "15,000원",
+              "fontSize": 31,
+              "typeface": "Apple SD Gothic Neo",
+              "color": "#17202A",
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 19,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/fu18jqh0",
+      "id": "19",
+      "bbox": [
+        898,
+        280,
+        204,
+        36
+      ],
+      "geometry": "rect",
+      "text": "일일 최대 요금",
+      "textPreview": "일일 최대 요금",
+      "resolvedFontSize": 13,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 13,
+        "typeface": "Apple SD Gothic Neo",
+        "color": "#5F6C7B",
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "일일 최대 요금"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "일일 최대 요금",
+          "resolvedTextStyle": {
+            "fontSize": 13,
+            "typeface": "Apple SD Gothic Neo",
+            "color": "#5F6C7B",
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "일일 최대 요금",
+              "fontSize": 13,
+              "typeface": "Apple SD Gothic Neo",
+              "color": "#5F6C7B"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 20,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/7qpg3ex0",
+      "id": "20",
+      "bbox": [
+        92,
+        420,
+        220,
+        82
+      ],
+      "geometry": "rect",
+      "fillColor": "#FFFFFF",
+      "lineColor": "#0B4F8A",
+      "lineWidth": 1
+    },
+    {
+      "order": 21,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/i5sneloj",
+      "id": "21",
+      "bbox": [
+        104,
+        432,
+        196,
+        58
+      ],
+      "geometry": "rect",
+      "text": "현재 총요금\ncalculate_parking_fee",
+      "textPreview": "현재 총요금 | calculate_parking_fee",
+      "resolvedFontSize": 15,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 15,
+        "typeface": "Apple SD Gothic Neo",
+        "color": "#0B4F8A",
+        "bold": true,
+        "alignment": "center",
+        "verticalAlignment": "middle",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 2,
+        "lines": [
+          {
+            "index": 1,
+            "text": "현재 총요금"
+          },
+          {
+            "index": 2,
+            "text": "calculate_parking_fee"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "현재 총요금",
+          "resolvedTextStyle": {
+            "fontSize": 15,
+            "typeface": "Apple SD Gothic Neo",
+            "color": "#0B4F8A",
+            "bold": true,
+            "alignment": "center"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "현재 총요금",
+              "fontSize": 15,
+              "typeface": "Apple SD Gothic Neo",
+              "color": "#0B4F8A",
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        },
+        {
+          "index": 2,
+          "text": "calculate_parking_fee",
+          "resolvedTextStyle": {
+            "fontSize": 15,
+            "typeface": "Apple SD Gothic Neo",
+            "color": "#0B4F8A",
+            "bold": true,
+            "alignment": "center"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "calculate_parking_fee",
+              "fontSize": 15,
+              "typeface": "Apple SD Gothic Neo",
+              "color": "#0B4F8A",
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 22,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/pwb2hwfy",
+      "id": "22",
+      "bbox": [
+        327,
+        443,
+        40,
+        30
+      ],
+      "geometry": "rect",
+      "text": "-",
+      "textPreview": "-",
+      "resolvedFontSize": 22,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 22,
+        "typeface": "Apple SD Gothic Neo",
+        "color": "#0B4F8A",
+        "bold": true,
+        "alignment": "center",
+        "verticalAlignment": "middle",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "-"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "-",
+          "resolvedTextStyle": {
+            "fontSize": 22,
+            "typeface": "Apple SD Gothic Neo",
+            "color": "#0B4F8A",
+            "bold": true,
+            "alignment": "center"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "-",
+              "fontSize": 22,
+              "typeface": "Apple SD Gothic Neo",
+              "color": "#0B4F8A",
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 23,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/0bi9s36h",
+      "id": "23",
+      "bbox": [
+        384,
+        420,
+        220,
+        82
+      ],
+      "geometry": "rect",
+      "fillColor": "#EDF9F6",
+      "lineColor": "#159A82",
+      "lineWidth": 1
+    },
+    {
+      "order": 24,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/7y1kre1w",
+      "id": "24",
+      "bbox": [
+        396,
+        432,
+        196,
+        58
+      ],
+      "geometry": "rect",
+      "text": "사전정산 합계\nprepaid_amount",
+      "textPreview": "사전정산 합계 | prepaid_amount",
+      "resolvedFontSize": 15,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 15,
+        "typeface": "Apple SD Gothic Neo",
+        "color": "#159A82",
+        "bold": true,
+        "alignment": "center",
+        "verticalAlignment": "middle",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 2,
+        "lines": [
+          {
+            "index": 1,
+            "text": "사전정산 합계"
+          },
+          {
+            "index": 2,
+            "text": "prepaid_amount"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "사전정산 합계",
+          "resolvedTextStyle": {
+            "fontSize": 15,
+            "typeface": "Apple SD Gothic Neo",
+            "color": "#159A82",
+            "bold": true,
+            "alignment": "center"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "사전정산 합계",
+              "fontSize": 15,
+              "typeface": "Apple SD Gothic Neo",
+              "color": "#159A82",
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        },
+        {
+          "index": 2,
+          "text": "prepaid_amount",
+          "resolvedTextStyle": {
+            "fontSize": 15,
+            "typeface": "Apple SD Gothic Neo",
+            "color": "#159A82",
+            "bold": true,
+            "alignment": "center"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "prepaid_amount",
+              "fontSize": 15,
+              "typeface": "Apple SD Gothic Neo",
+              "color": "#159A82",
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 25,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/ed8v6psf",
+      "id": "25",
+      "bbox": [
+        619,
+        443,
+        40,
+        30
+      ],
+      "geometry": "rect",
+      "text": "=",
+      "textPreview": "=",
+      "resolvedFontSize": 22,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 22,
+        "typeface": "Apple SD Gothic Neo",
+        "color": "#0B4F8A",
+        "bold": true,
+        "alignment": "center",
+        "verticalAlignment": "middle",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "="
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "=",
+          "resolvedTextStyle": {
+            "fontSize": 22,
+            "typeface": "Apple SD Gothic Neo",
+            "color": "#0B4F8A",
+            "bold": true,
+            "alignment": "center"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "=",
+              "fontSize": 22,
+              "typeface": "Apple SD Gothic Neo",
+              "color": "#0B4F8A",
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 26,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/p4r65wju",
+      "id": "26",
+      "bbox": [
+        676,
+        420,
+        220,
+        82
+      ],
+      "geometry": "rect",
+      "fillColor": "#FFF8E6",
+      "lineColor": "#E7D39A",
+      "lineWidth": 1
+    },
+    {
+      "order": 27,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/wjudg7ad",
+      "id": "27",
+      "bbox": [
+        688,
+        432,
+        196,
+        58
+      ],
+      "geometry": "rect",
+      "text": "현재 내야 할 돈\noutstanding_fee",
+      "textPreview": "현재 내야 할 돈 | outstanding_fee",
+      "resolvedFontSize": 15,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 15,
+        "typeface": "Apple SD Gothic Neo",
+        "color": "#9A6B00",
+        "bold": true,
+        "alignment": "center",
+        "verticalAlignment": "middle",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 2,
+        "lines": [
+          {
+            "index": 1,
+            "text": "현재 내야 할 돈"
+          },
+          {
+            "index": 2,
+            "text": "outstanding_fee"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "현재 내야 할 돈",
+          "resolvedTextStyle": {
+            "fontSize": 15,
+            "typeface": "Apple SD Gothic Neo",
+            "color": "#9A6B00",
+            "bold": true,
+            "alignment": "center"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "현재 내야 할 돈",
+              "fontSize": 15,
+              "typeface": "Apple SD Gothic Neo",
+              "color": "#9A6B00",
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        },
+        {
+          "index": 2,
+          "text": "outstanding_fee",
+          "resolvedTextStyle": {
+            "fontSize": 15,
+            "typeface": "Apple SD Gothic Neo",
+            "color": "#9A6B00",
+            "bold": true,
+            "alignment": "center"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "outstanding_fee",
+              "fontSize": 15,
+              "typeface": "Apple SD Gothic Neo",
+              "color": "#9A6B00",
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 28,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/72x4nap4",
+      "id": "28",
+      "bbox": [
+        92,
+        548,
+        965,
+        52
+      ],
+      "geometry": "rect",
+      "text": "예시: 61분 주차 총요금 2,000원 → 사전정산 2,000원 → 직후 미정산 0원 → 71분이 되면 추가 500원만 발생",
+      "textPreview": "예시: 61분 주차 총요금 2,000원 → 사전정산 2,000원 → 직후 미정산 0원 → 71분이 되면 추가 500원만 발생",
+      "resolvedFontSize": 20,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 20,
+        "typeface": "Apple SD Gothic Neo",
+        "color": "#17202A",
+        "bold": true,
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "예시: 61분 주차 총요금 2,000원 → 사전정산 2,000원 → 직후 미정산 0원 → 71분이 되면 추가 500원만 발생"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "예시: 61분 주차 총요금 2,000원 → 사전정산 2,000원 → 직후 미정산 0원 → 71분이 되면 추가 500원만 발생",
+          "resolvedTextStyle": {
+            "fontSize": 20,
+            "typeface": "Apple SD Gothic Neo",
+            "color": "#17202A",
+            "bold": true,
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "예시: 61분 주차 총요금 2,000원 → 사전정산 2,000원 → 직후 미정산 0원 → 71분이 되면 추가 500원만 발생",
+              "fontSize": 20,
+              "typeface": "Apple SD Gothic Neo",
+              "color": "#17202A",
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 29,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/ih4byhgn",
+      "id": "29",
+      "bbox": [
+        92,
+        616,
+        1000,
+        32
+      ],
+      "geometry": "rect",
+      "text": "이번 수정으로 결제 기록과 활성 세션을 공통 매칭 로직으로 연결해 번호판 공백 차이에도 정산 금액이 즉시 반영됩니다.",
+      "textPreview": "이번 수정으로 결제 기록과 활성 세션을 공통 매칭 로직으로 연결해 번호판 공백 차이에도 정산 금액이 즉시 반영됩니다.",
+      "resolvedFontSize": 15,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 15,
+        "typeface": "Apple SD Gothic Neo",
+        "color": "#5F6C7B",
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "이번 수정으로 결제 기록과 활성 세션을 공통 매칭 로직으로 연결해 번호판 공백 차이에도 정산 금액이 즉시 반영됩니다."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "이번 수정으로 결제 기록과 활성 세션을 공통 매칭 로직으로 연결해 번호판 공백 차이에도 정산 금액이 즉시 반영됩니다.",
+          "resolvedTextStyle": {
+            "fontSize": 15,
+            "typeface": "Apple SD Gothic Neo",
+            "color": "#5F6C7B",
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "이번 수정으로 결제 기록과 활성 세션을 공통 매칭 로직으로 연결해 번호판 공백 차이에도 정산 금액이 즉시 반영됩니다.",
+              "fontSize": 15,
+              "typeface": "Apple SD Gothic Neo",
+              "color": "#5F6C7B"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 30,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/c3ylc7u5",
+      "id": "30",
+      "bbox": [
+        56,
+        680,
+        420,
+        24
+      ],
+      "geometry": "rect",
+      "text": "Au-Park Project Overview",
+      "textPreview": "Au-Park Project Overview",
+      "resolvedFontSize": 12,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 12,
+        "typeface": "Aptos",
+        "color": "#5F6C7B",
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Au-Park Project Overview"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Au-Park Project Overview",
+          "resolvedTextStyle": {
+            "fontSize": 12,
+            "typeface": "Aptos",
+            "color": "#5F6C7B",
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Au-Park Project Overview",
+              "fontSize": 12,
+              "typeface": "Aptos",
+              "color": "#5F6C7B"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 31,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/1kre1w7m",
+      "id": "31",
+      "bbox": [
+        1170,
+        678,
+        54,
+        28
+      ],
+      "geometry": "rect",
+      "text": "07",
+      "textPreview": "07",
+      "resolvedFontSize": 14,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 14,
+        "typeface": "Aptos",
+        "color": "#0B4F8A",
+        "bold": true,
+        "alignment": "right",
+        "verticalAlignment": "top",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "07"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "07",
+          "resolvedTextStyle": {
+            "fontSize": 14,
+            "typeface": "Aptos",
+            "color": "#0B4F8A",
+            "bold": true,
+            "alignment": "right"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "07",
+              "fontSize": 14,
+              "typeface": "Aptos",
+              "color": "#0B4F8A",
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    }
+  ],
+  "composeRuns": []
+}

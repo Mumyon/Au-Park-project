@@ -289,8 +289,7 @@ def test_prepayment_is_deducted_from_live_outstanding_fee() -> None:
         "/api/v1/payments/request",
         json={
             "user_id": user_id,
-            "vehicle_id": vehicle["id"],
-            "plate_number": "66라6666",
+            "plate_number": "66 라 6666",
             "amount": 2000,
             "description": "사전 정산",
             "lot_id": "lot-main",

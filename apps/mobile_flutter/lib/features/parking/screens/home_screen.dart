@@ -29,6 +29,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   final ApiClient _apiClient = ApiClient();
   Timer? _syncTimer;
   bool _syncInProgress = false;
+  int _syncRequestId = 0;
 
   @override
   void initState() {
@@ -56,15 +57,16 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     }
   }
 
-  Future<void> _syncActiveParkingSession() async {
-    if (_syncInProgress || !mounted) {
+  Future<void> _syncActiveParkingSession({bool force = false}) async {
+    if ((_syncInProgress && !force) || !mounted) {
       return;
     }
+    final requestId = ++_syncRequestId;
     _syncInProgress = true;
 
     try {
       final prefs = await SharedPreferences.getInstance();
-      if (!mounted) {
+      if (!_isLatestSyncRequest(requestId)) {
         return;
       }
       final providerUserId = Provider.of<UserProvider>(
@@ -80,7 +82,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       }
 
       final session = await _apiClient.getActiveParkingSession(userId);
-      if (!mounted) {
+      if (!_isLatestSyncRequest(requestId)) {
         return;
       }
       if (session == null) {
@@ -123,11 +125,15 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     } catch (error) {
       debugPrint('Active parking sync failed: $error');
     } finally {
-      _syncInProgress = false;
-      if (mounted) {
+      if (_isLatestSyncRequest(requestId)) {
+        _syncInProgress = false;
         setState(() {});
       }
     }
+  }
+
+  bool _isLatestSyncRequest(int requestId) {
+    return mounted && requestId == _syncRequestId;
   }
 
   Future<void> _processDirectPayment({
@@ -200,7 +206,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
         throw Exception('Missing user id');
       }
 
-      final payment = await ApiClient().requestPayment(
+      final payment = await _apiClient.requestPayment(
         userId: userId,
         vehicleId: matchedVehicle?.id,
         plateNumber: currentVehicle,
@@ -223,7 +229,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
         navigator.pop();
       }
 
-      await _syncActiveParkingSession();
+      await _syncActiveParkingSession(force: true);
 
       messenger.showSnackBar(
         SnackBar(
@@ -759,33 +765,48 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 
   Widget _buildFeeSummary() {
     return ValueListenableBuilder<int>(
-      valueListenable: SharedData.parkingOutstandingFee,
-      builder: (context, outstandingFee, child) {
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            _buildFeeLine('기본요금', SharedData.parkingBaseFee.value),
-            _buildFeeLine('추가요금', SharedData.parkingAdditionalFee.value),
-            if (SharedData.parkingPrepaidAmount.value > 0)
-              _buildFeeLine(
-                '정산 완료',
-                SharedData.parkingPrepaidAmount.value,
-                color: Colors.white70,
-              ),
-            const SizedBox(height: 3),
-            const Text(
-              '현재 미정산',
-              style: TextStyle(color: Colors.white70, fontSize: 11),
-            ),
-            Text(
-              _formatWon(outstandingFee),
-              style: const TextStyle(
-                color: Colors.yellowAccent,
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
+      valueListenable: SharedData.parkingBaseFee,
+      builder: (context, baseFee, child) {
+        return ValueListenableBuilder<int>(
+          valueListenable: SharedData.parkingAdditionalFee,
+          builder: (context, additionalFee, child) {
+            return ValueListenableBuilder<int>(
+              valueListenable: SharedData.parkingPrepaidAmount,
+              builder: (context, prepaidAmount, child) {
+                return ValueListenableBuilder<int>(
+                  valueListenable: SharedData.parkingOutstandingFee,
+                  builder: (context, outstandingFee, child) {
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        _buildFeeLine('기본요금', baseFee),
+                        _buildFeeLine('추가요금', additionalFee),
+                        if (prepaidAmount > 0)
+                          _buildFeeLine(
+                            '정산 완료',
+                            prepaidAmount,
+                            color: Colors.white70,
+                          ),
+                        const SizedBox(height: 3),
+                        const Text(
+                          '현재 미정산',
+                          style: TextStyle(color: Colors.white70, fontSize: 11),
+                        ),
+                        Text(
+                          _formatWon(outstandingFee),
+                          style: const TextStyle(
+                            color: Colors.yellowAccent,
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    );
+                  },
+                );
+              },
+            );
+          },
         );
       },
     );

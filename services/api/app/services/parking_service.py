@@ -18,6 +18,7 @@ from app.schemas.parking import (
 from app.schemas.payment import Payment, PaymentStatus
 from app.schemas.vehicle import Vehicle
 from app.services.parking_fee import calculate_parking_fee, calculate_parking_fee_breakdown
+from app.services.parking_payment_matcher import normalize_plate, payment_matches_session
 from app.services.repository import InMemoryRepository, repository
 
 
@@ -324,33 +325,11 @@ class ParkingService:
         return payment
 
     def _find_prepaid_payments(self, session: ParkingSession) -> list[Payment]:
-        normalized_plate = self._normalize_plate(session.plate_number)
         return [
             payment
             for payment in self.repo.payments.values()
-            if payment.status == PaymentStatus.paid
-            and payment.user_id == session.user_id
-            and self._payment_matches_session(payment, session, normalized_plate)
+            if payment_matches_session(payment, session)
         ]
-
-    def _payment_matches_session(
-        self,
-        payment: Payment,
-        session: ParkingSession,
-        normalized_plate: str,
-    ) -> bool:
-        payment_exit_at = self._as_aware_utc(payment.exit_at)
-        if payment_exit_at is None:
-            return False
-        if payment.lot_id and payment.lot_id != session.lot_id:
-            return False
-        if payment.vehicle_id and payment.vehicle_id != session.vehicle_id:
-            return False
-        if payment.plate_number and self._normalize_plate(payment.plate_number) != normalized_plate:
-            return False
-        if not payment.vehicle_id and not payment.plate_number:
-            return False
-        return payment_exit_at >= self._as_aware_utc(session.entry_at)
 
     def _find_vehicle_by_plate(self, plate_number: str) -> Vehicle | None:
         normalized = self._normalize_plate(plate_number)
@@ -389,7 +368,7 @@ class ParkingService:
 
     @staticmethod
     def _normalize_plate(plate_number: str) -> str:
-        return "".join(plate_number.split()).upper()
+        return normalize_plate(plate_number)
 
     @staticmethod
     def _duration_minutes(entry_at: datetime, exit_at: datetime) -> int:

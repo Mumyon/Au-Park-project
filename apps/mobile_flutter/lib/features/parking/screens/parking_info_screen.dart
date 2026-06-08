@@ -10,7 +10,10 @@ class ParkingInfoScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('실시간 주차 정보', style: TextStyle(fontWeight: FontWeight.bold)),
+        title: const Text(
+          '실시간 주차 정보',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
         centerTitle: true,
       ),
       body: ValueListenableBuilder<bool>(
@@ -21,11 +24,19 @@ class ParkingInfoScreen extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.no_sim_outlined, size: 64, color: Colors.grey.shade400),
+                  Icon(
+                    Icons.no_sim_outlined,
+                    size: 64,
+                    color: Colors.grey.shade400,
+                  ),
                   const SizedBox(height: 16),
                   Text(
                     '현재 주차중인 차량이 없습니다.',
-                    style: TextStyle(fontSize: 16, color: Colors.grey.shade500, fontWeight: FontWeight.w500),
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.grey.shade500,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
                 ],
               ),
@@ -43,34 +54,78 @@ class ParkingInfoScreen extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: Theme.of(context).cardColor,
                     borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: Theme.of(context).primaryColor.withValues(alpha: 0.1)),
+                    border: Border.all(
+                      color: Theme.of(
+                        context,
+                      ).primaryColor.withValues(alpha: 0.1),
+                    ),
                     boxShadow: [
                       BoxShadow(
                         color: Colors.black.withValues(alpha: 0.02),
                         blurRadius: 10,
                         offset: const Offset(0, 4),
-                      )
+                      ),
                     ],
                   ),
                   child: Column(
                     children: [
-                      const Text('현재 누적 주차 요금', style: TextStyle(fontSize: 14, color: Colors.grey, fontWeight: FontWeight.w500)),
+                      const Text(
+                        '현재 미정산 주차 요금',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.grey,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
                       const SizedBox(height: 8),
-                      Text(
-                        '3,500원',
-                        style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: Theme.of(context).primaryColor),
+                      ValueListenableBuilder<int>(
+                        valueListenable: SharedData.parkingOutstandingFee,
+                        builder: (context, outstandingFee, child) {
+                          return Text(
+                            _formatWon(outstandingFee),
+                            style: TextStyle(
+                              fontSize: 32,
+                              fontWeight: FontWeight.bold,
+                              color: Theme.of(context).primaryColor,
+                            ),
+                          );
+                        },
                       ),
                       const SizedBox(height: 4),
-                      const Text('기본 30분 1,000원 / 추가 10분 500원', style: TextStyle(fontSize: 11, color: Colors.grey)),
+                      ValueListenableBuilder<int>(
+                        valueListenable: SharedData.parkingPrepaidAmount,
+                        builder: (context, prepaidAmount, child) {
+                          if (prepaidAmount <= 0) {
+                            return const Text(
+                              '기본 30분 무료 / 이후 30분 1,500원, 추가 10분 500원',
+                              style: TextStyle(
+                                fontSize: 11,
+                                color: Colors.grey,
+                              ),
+                            );
+                          }
+                          return Text(
+                            '사전 정산 완료 ${_formatWon(prepaidAmount)}',
+                            style: const TextStyle(
+                              fontSize: 11,
+                              color: Colors.grey,
+                            ),
+                          );
+                        },
+                      ),
                     ],
                   ),
                 ),
-                
+
                 const SizedBox(height: 32),
-                
+
                 Text(
                   '상세 주차 정보',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: isDarkMode ? Colors.grey.shade300 : Colors.black54),
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: isDarkMode ? Colors.grey.shade300 : Colors.black54,
+                  ),
                 ),
                 const SizedBox(height: 12),
 
@@ -113,7 +168,7 @@ class ParkingInfoScreen extends StatelessWidget {
                     ],
                   ),
                 ),
-                
+
                 const SizedBox(height: 32),
 
                 Container(
@@ -121,42 +176,69 @@ class ParkingInfoScreen extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: Colors.orange.withValues(alpha: 0.05),
                     borderRadius: BorderRadius.circular(14),
-                    border: Border.all(color: Colors.orange.withValues(alpha: 0.2)),
+                    border: Border.all(
+                      color: Colors.orange.withValues(alpha: 0.2),
+                    ),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const Row(
                         children: [
-                          Icon(Icons.build_circle_outlined, color: Colors.orange, size: 18),
+                          Icon(
+                            Icons.build_circle_outlined,
+                            color: Colors.orange,
+                            size: 18,
+                          ),
                           SizedBox(width: 8),
-                          Text('시연 제어판 (발표용)', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.orange)),
+                          Text(
+                            '시연 제어판 (발표용)',
+                            style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.orange,
+                            ),
+                          ),
                         ],
                       ),
                       const SizedBox(height: 12),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Text('앱 상태를 주차 완료(출차) 상태로 가상 변경:', style: TextStyle(fontSize: 12, color: Colors.grey)),
+                          const Text(
+                            '앱 상태를 주차 완료(출차) 상태로 가상 변경:',
+                            style: TextStyle(fontSize: 12, color: Colors.grey),
+                          ),
                           ElevatedButton(
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.orange,
                               foregroundColor: Colors.white,
-                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 8,
+                              ),
                               minimumSize: Size.zero,
                               tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
                             ),
                             onPressed: () {
                               SharedData.isCurrentlyParked.value = false;
                             },
-                            child: const Text('출차 처리', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
-                          )
+                            child: const Text(
+                              '출차 처리',
+                              style: TextStyle(
+                                fontSize: 11,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
                         ],
-                      )
+                      ),
                     ],
                   ),
-                )
+                ),
               ], // 🔥 이 부분의 괄호 짝을 완벽하게 맞췄습니다!
             ),
           );
@@ -177,7 +259,14 @@ class ParkingInfoScreen extends StatelessWidget {
         children: [
           Icon(icon, color: Colors.grey, size: 22),
           const SizedBox(width: 12),
-          Text(label, style: const TextStyle(fontSize: 15, color: Colors.grey, fontWeight: FontWeight.w500)),
+          Text(
+            label,
+            style: const TextStyle(
+              fontSize: 15,
+              color: Colors.grey,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
           const Spacer(),
           Text(
             value,
@@ -200,5 +289,13 @@ class ParkingInfoScreen extends StatelessWidget {
       endIndent: 20,
       color: isDarkMode ? Colors.grey.shade800 : Colors.grey.shade100,
     );
+  }
+
+  String _formatWon(int amount) {
+    final text = amount.toString().replaceAllMapped(
+      RegExp(r'\B(?=(\d{3})+(?!\d))'),
+      (match) => ',',
+    );
+    return '$text원';
   }
 }

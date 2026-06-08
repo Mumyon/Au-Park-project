@@ -26,6 +26,7 @@ class PlateRecognitionWorker:
         self.last_sent: dict[str, float] = {}
         self.auto_armed = True
         self.absent_frame_count = 0
+        self.last_idle_log_at = 0.0
         self.crop_dir = Path(config.plate_camera.crop_output_dir)
         self.crop_dir.mkdir(parents=True, exist_ok=True)
 
@@ -33,6 +34,14 @@ class PlateRecognitionWorker:
         if not self.config.plate_camera.enabled:
             print("Plate camera is disabled.")
             return
+        print(
+            "Plate worker started: "
+            f"source={self.config.plate_camera.source}, "
+            f"role={self.config.plate_camera.role}, "
+            f"interval={self.config.plate_camera.frame_interval_seconds}s, "
+            f"repeat={self.config.plate_camera.min_repeat_count}, "
+            f"roi_enabled={self.config.plate_camera.roi.enabled}"
+        )
         for frame in self.source.frames(self.config.plate_camera.frame_interval_seconds):
             frame = self._apply_roi(frame)
             if (
@@ -51,6 +60,8 @@ class PlateRecognitionWorker:
                     plate_present = True
                     break
             self._update_auto_rearm(plate_present)
+            if not plate_present:
+                self._log_idle_status()
 
     def _handle_candidate(self, crop) -> bool:
         self._save_debug_crop(crop)
@@ -104,6 +115,13 @@ class PlateRecognitionWorker:
         self.absent_frame_count = 0
         self.recent.clear()
         print("LPR auto mode rearmed. Ready for the next vehicle event.")
+
+    def _log_idle_status(self) -> None:
+        now = time.monotonic()
+        if now - self.last_idle_log_at < 10:
+            return
+        self.last_idle_log_at = now
+        print("No valid plate detected yet. Check camera source, ROI, focus, and lighting.")
 
     @staticmethod
     def _is_camera_covered(frame) -> bool:

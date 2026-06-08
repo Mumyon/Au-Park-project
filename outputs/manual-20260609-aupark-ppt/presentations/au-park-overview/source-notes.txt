@@ -1,0 +1,3 @@
+Source: /Users/jobyeongik/Documents/GitHub/Au-Park-project/project_overview.html
+Local asset: /Users/jobyeongik/Documents/GitHub/Au-Park-project/app_icon_128.jpg
+The deck summarizes the HTML document into a presentation narrative. No external sources or unverified identity assets are used.
