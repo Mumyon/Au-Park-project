@@ -5,6 +5,10 @@ plugins {
     id("dev.flutter.flutter-gradle-plugin")
 }
 
+fun socialProperty(name: String, defaultValue: String = ""): String {
+    return (project.findProperty(name) as String?) ?: defaultValue
+}
+
 android {
     namespace = "com.example.flutter_application_1"
     compileSdk = flutter.compileSdkVersion
@@ -28,6 +32,10 @@ android {
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+        manifestPlaceholders["kakaoNativeAppKey"] = socialProperty("KAKAO_NATIVE_APP_KEY")
+        resValue("string", "client_id", socialProperty("NAVER_CLIENT_ID"))
+        resValue("string", "client_secret", socialProperty("NAVER_CLIENT_SECRET"))
+        resValue("string", "client_name", socialProperty("NAVER_CLIENT_NAME", "Au-Park"))
     }
 
     buildTypes {

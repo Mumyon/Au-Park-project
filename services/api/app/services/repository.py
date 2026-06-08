@@ -7,7 +7,7 @@ from pydantic import BaseModel
 
 from app.core.config import settings
 from app.schemas.log import EntryExitLog, EntryExitType
-from app.schemas.parking import ParkingLot, ParkingSlot, SlotStatus
+from app.schemas.parking import ParkingLot, ParkingSession, ParkingSlot, SlotStatus
 from app.schemas.payment import Payment, PaymentMethodCreateRequest
 from app.schemas.user import User
 from app.schemas.vehicle import Vehicle
@@ -137,6 +137,7 @@ class InMemoryRepository:
             )
         }
         self.parking_slots: dict[str, ParkingSlot] = {slot.id: slot for slot in default_parking_slots()}
+        self.parking_sessions: dict[str, ParkingSession] = {}
         self.payments: dict[str, Payment] = {}
         self.payment_methods: dict[str, PaymentMethodCreateRequest] = {}
         self.entry_exit_logs: dict[str, EntryExitLog] = {}
@@ -181,6 +182,7 @@ class FirebaseRealtimeRepository(InMemoryRepository):
         self.vehicles = FirebaseModelCollection(self.root_ref, "vehicles", Vehicle)
         self.parking_lots = FirebaseModelCollection(self.root_ref, "parking_lots", ParkingLot)
         self.parking_slots = FirebaseModelCollection(self.root_ref, "parking_slots", ParkingSlot)
+        self.parking_sessions = FirebaseModelCollection(self.root_ref, "parking_sessions", ParkingSession)
         self.payments = FirebaseModelCollection(self.root_ref, "payments", Payment)
         self.payment_methods = FirebaseModelCollection(
             self.root_ref,

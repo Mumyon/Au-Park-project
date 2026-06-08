@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -14,9 +15,20 @@ class ApiException implements Exception {
 }
 
 class ApiClient {
-  static final String baseUrl = Platform.isAndroid
-      ? 'http://10.0.2.2:8000/api/v1'
-      : 'http://172.30.1.55:8000/api/v1';
+  static const Duration _requestTimeout = Duration(seconds: 15);
+  static const String _configuredBaseUrl = String.fromEnvironment(
+    'API_BASE_URL',
+  );
+
+  static String get baseUrl {
+    if (_configuredBaseUrl.isNotEmpty) {
+      return _configuredBaseUrl;
+    }
+    if (Platform.isAndroid) {
+      return 'http://10.0.2.2:8000/api/v1';
+    }
+    return 'http://100.100.107.250:8000/api/v1';
+  }
 
   final http.Client _client;
 
@@ -26,10 +38,7 @@ class ApiClient {
     required String email,
     required String password,
   }) {
-    return postJson('/auth/login', {
-      'email': email,
-      'password': password,
-    });
+    return postJson('/auth/login', {'email': email, 'password': password});
   }
 
   Future<Map<String, dynamic>> signup({
@@ -75,7 +84,9 @@ class ApiClient {
   }
 
   Future<void> deleteVehicle(String vehicleId) async {
-    final response = await _client.delete(Uri.parse('$baseUrl/vehicles/$vehicleId'));
+    final response = await _send(
+      () => _client.delete(Uri.parse('$baseUrl/vehicles/$vehicleId')),
+    );
     if (response.statusCode != 204) {
       throw _errorFromResponse(response);
     }
@@ -105,7 +116,8 @@ class ApiClient {
     return postJson('/payments/request', {
       'user_id': userId,
       if (vehicleId != null && vehicleId.isNotEmpty) 'vehicle_id': vehicleId,
-      if (plateNumber != null && plateNumber.isNotEmpty) 'plate_number': plateNumber,
+      if (plateNumber != null && plateNumber.isNotEmpty)
+        'plate_number': plateNumber,
       'amount': amount,
       'description': description,
       if (lotId != null) 'lot_id': lotId,
@@ -146,7 +158,7 @@ class ApiClient {
   }
 
   Future<Map<String, dynamic>> getJson(String path) async {
-    final response = await _client.get(Uri.parse('$baseUrl$path'));
+    final response = await _send(() => _client.get(Uri.parse('$baseUrl$path')));
     if (response.statusCode >= 200 && response.statusCode < 300) {
       return _decodeObject(response.body);
     }
@@ -154,7 +166,7 @@ class ApiClient {
   }
 
   Future<List<dynamic>> getJsonList(String path) async {
-    final response = await _client.get(Uri.parse('$baseUrl$path'));
+    final response = await _send(() => _client.get(Uri.parse('$baseUrl$path')));
     if (response.statusCode >= 200 && response.statusCode < 300) {
       final decoded = jsonDecode(response.body);
       if (decoded is List) {
@@ -165,16 +177,37 @@ class ApiClient {
     throw _errorFromResponse(response);
   }
 
-  Future<Map<String, dynamic>> postJson(String path, Map<String, dynamic> body) async {
-    final response = await _client.post(
-      Uri.parse('$baseUrl$path'),
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode(body),
+  Future<Map<String, dynamic>> postJson(
+    String path,
+    Map<String, dynamic> body,
+  ) async {
+    final response = await _send(
+      () => _client.post(
+        Uri.parse('$baseUrl$path'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode(body),
+      ),
     );
     if (response.statusCode >= 200 && response.statusCode < 300) {
       return _decodeObject(response.body);
     }
     throw _errorFromResponse(response);
+  }
+
+  Future<http.Response> _send(Future<http.Response> Function() request) async {
+    try {
+      return await request().timeout(_requestTimeout);
+    } on SocketException catch (error) {
+      throw ApiException('서버 연결 실패: $baseUrl (${error.message})');
+    } on HttpException catch (error) {
+      throw ApiException('서버 통신 실패: $baseUrl (${error.message})');
+    } on http.ClientException catch (error) {
+      throw ApiException('서버 요청 실패: $baseUrl (${error.message})');
+    } on TimeoutException {
+      throw ApiException('서버 응답 시간 초과: $baseUrl');
+    } catch (error) {
+      throw ApiException('서버 요청 오류: $baseUrl ($error)');
+    }
   }
 
   Map<String, dynamic> _decodeObject(String body) {
@@ -191,8 +224,7 @@ class ApiClient {
       if (decoded is Map && decoded['detail'] != null) {
         return ApiException(decoded['detail'].toString(), response.statusCode);
       }
-    } catch (_) {
-    }
+    } catch (_) {}
     return ApiException('API request failed', response.statusCode);
   }
 }

@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_naver_login/flutter_naver_login.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 // ⚠️ 본인의 폴더 구조에 맞게 경로 확인 필수!
 import '../../../core/api/api_client.dart';
+import '../../../core/auth/social_auth_config.dart';
 import 'signup_screen.dart';
 import '../../parking/screens/main_navigation_screen.dart';
 import '../../../core/shared_data.dart';
@@ -24,6 +27,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final _passwordController = TextEditingController();
   bool _isPasswordVisible = false;
   bool _isAutoLoginChecked = false;
+  bool _isKakaoSdkReady = false;
 
   @override
   void dispose() {
@@ -72,6 +76,7 @@ class _LoginScreenState extends State<LoginScreen> {
           name: user['name'] ?? '사용자',
           email: user['email'] ?? _emailController.text.trim(),
           vehicleNumber: '등록된 차량 없음',
+          accessToken: result['access_token']?.toString(),
         );
       } else {
         // 실패 (비밀번호 틀림 등)
@@ -95,13 +100,14 @@ class _LoginScreenState extends State<LoginScreen> {
       );
     } catch (e) {
       if (!mounted) return;
+      debugPrint('Email login error: ${e.runtimeType} $e');
       // 🔥 에러 시에도 팝업만 정확히 닫기!
       if (loadingDialogOpen) {
         Navigator.of(context, rootNavigator: true).pop();
       }
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('⚠️ 서버 접속 실패. 서버 상태를 확인해주세요.')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('⚠️ 로그인 에러: ${e.runtimeType} $e')));
     }
   }
 
@@ -109,10 +115,16 @@ class _LoginScreenState extends State<LoginScreen> {
   // ✅ 2. 구글 연동 로그인
   // ------------------------------------------------------------------------
   Future<void> _handleGoogleLogin() async {
-    var loadingDialogOpen = false;
+    if (!SocialAuthConfig.canUseGoogle) {
+      _showSocialConfigMessage('구글');
+      return;
+    }
 
     try {
-      final GoogleSignIn googleSignIn = GoogleSignIn();
+      final GoogleSignIn googleSignIn = GoogleSignIn(
+        clientId: SocialAuthConfig.googleClientId,
+        serverClientId: SocialAuthConfig.googleSignInServerClientId,
+      );
       await googleSignIn.signOut(); // 계정 선택 창 강제 호출
       final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
 
@@ -130,63 +142,212 @@ class _LoginScreenState extends State<LoginScreen> {
         return;
       }
 
-      if (!mounted) return;
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (context) => const Center(child: CircularProgressIndicator()),
-      );
-      loadingDialogOpen = true;
-
-      final result = await _apiClient.socialLogin(
+      await _loginWithSocialToken(
         provider: 'google',
         token: idToken,
+        fallbackName: googleUser.displayName ?? '구글 유저',
+        fallbackEmail: googleUser.email,
+      );
+    } on ApiException catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('❌ 구글 서버 인증 실패: ${e.message}')));
+    } catch (e) {
+      if (!mounted) return;
+      debugPrint('Google login error: ${e.runtimeType} $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('⚠️ 구글 로그인 에러: ${e.runtimeType} $e')),
+      );
+    }
+  }
+
+  Future<void> _handleKakaoLogin() async {
+    if (!SocialAuthConfig.canUseKakao) {
+      _showSocialConfigMessage('카카오');
+      return;
+    }
+
+    try {
+      await _ensureKakaoSdkReady();
+      final OAuthToken token = await isKakaoTalkInstalled()
+          ? await UserApi.instance.loginWithKakaoTalk()
+          : await UserApi.instance.loginWithKakaoAccount();
+
+      await _loginWithSocialToken(provider: 'kakao', token: token.accessToken);
+    } on ApiException catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('❌ 카카오 서버 인증 실패: ${e.message}')));
+    } catch (e) {
+      if (!mounted) return;
+      debugPrint('Kakao login error: ${e.runtimeType} $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('⚠️ 카카오 로그인 에러: ${e.runtimeType} $e')),
+      );
+    }
+  }
+
+  Future<void> _handleNaverLogin() async {
+    if (!SocialAuthConfig.canUseNaver) {
+      _showSocialConfigMessage('네이버');
+      return;
+    }
+
+    try {
+      final result = await FlutterNaverLogin.logIn();
+      final accessToken = result.accessToken?.accessToken;
+
+      if (!_isNaverLoggedIn(result.status) ||
+          accessToken == null ||
+          accessToken.isEmpty) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(result.errorMessage ?? '❌ 네이버 로그인 실패')),
+        );
+        return;
+      }
+
+      await _loginWithSocialToken(
+        provider: 'naver',
+        token: accessToken,
+        fallbackName: result.account?.name ?? result.account?.nickname,
+        fallbackEmail: result.account?.email,
+      );
+    } on ApiException catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('❌ 네이버 서버 인증 실패: ${e.message}')));
+    } catch (e) {
+      if (!mounted) return;
+      debugPrint('Naver login error: ${e.runtimeType} $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('⚠️ 네이버 로그인 에러: ${e.runtimeType} $e')),
+      );
+    }
+  }
+
+  Future<void> _ensureKakaoSdkReady() async {
+    if (_isKakaoSdkReady) return;
+
+    await KakaoSdk.init(nativeAppKey: SocialAuthConfig.kakaoNativeAppKey);
+    _isKakaoSdkReady = true;
+  }
+
+  bool _isNaverLoggedIn(Object status) {
+    return status.toString().split('.').last == 'loggedIn';
+  }
+
+  void _showSocialConfigMessage(String providerName) {
+    if (providerName == '구글' && !SocialAuthConfig.supportsGooglePlatform) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('구글 로그인은 Android/iOS 앱에서 지원됩니다.')),
+      );
+      return;
+    }
+
+    if (providerName == '카카오' && !SocialAuthConfig.supportsKakaoPlatform) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('카카오 로그인은 Android/iOS 앱에서 지원됩니다.')),
+      );
+      return;
+    }
+
+    if (providerName == '네이버' && !SocialAuthConfig.supportsNaverPlatform) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('네이버 로그인은 Android/iOS 앱에서 지원됩니다.')),
+      );
+      return;
+    }
+
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text('$providerName 로그인 설정값이 필요합니다.')));
+  }
+
+  Future<void> _loginWithSocialToken({
+    required String provider,
+    required String token,
+    String? fallbackName,
+    String? fallbackEmail,
+  }) async {
+    var loadingDialogOpen = false;
+    final providerName = _socialProviderName(provider);
+
+    if (!mounted) return;
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => const Center(child: CircularProgressIndicator()),
+    );
+    loadingDialogOpen = true;
+
+    try {
+      final result = await _apiClient.socialLogin(
+        provider: provider,
+        token: token,
       );
 
       if (!mounted) return;
-      // 🔥 팀킬 방지: 앱 화면이 아닌 팝업(Loading)만 정확히 닫기!
-      if (loadingDialogOpen) {
-        Navigator.of(context, rootNavigator: true).pop();
-        loadingDialogOpen = false;
-      }
-      // 서버 통신 성공 시!
+
       if (result['access_token'] != null && result['user_id'] != null) {
         final user = await _apiClient.getUser(result['user_id']);
+        if (!mounted) return;
+
+        if (loadingDialogOpen) {
+          Navigator.of(context, rootNavigator: true).pop();
+          loadingDialogOpen = false;
+        }
+
         await _finishLogin(
           userId: result['user_id'],
-          name: user['name'] ?? googleUser.displayName ?? '구글 유저',
-          email: user['email'] ?? googleUser.email,
+          name: user['name'] ?? fallbackName ?? '$providerName 유저',
+          email: user['email'] ?? fallbackEmail ?? '',
           vehicleNumber: '등록된 차량 없음',
+          accessToken: result['access_token']?.toString(),
         );
       } else {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(const SnackBar(content: Text('❌ 구글 로그인 실패: 토큰 검증 실패')));
+        if (loadingDialogOpen) {
+          Navigator.of(context, rootNavigator: true).pop();
+          loadingDialogOpen = false;
+        }
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('❌ $providerName 로그인 실패: 토큰 검증 실패')),
+        );
       }
     } on ApiException catch (e) {
       if (!mounted) return;
       if (loadingDialogOpen) {
         Navigator.of(context, rootNavigator: true).pop();
       }
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('❌ 구글 로그인 실패: ${e.message}')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('❌ $providerName 로그인 실패: ${e.message}')),
+      );
     } catch (e) {
       if (!mounted) return;
-      // 🔥 에러 시에도 팝업만 정확히 닫기!
+      debugPrint('$providerName social login error: ${e.runtimeType} $e');
       if (loadingDialogOpen) {
         Navigator.of(context, rootNavigator: true).pop();
       }
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('⚠️ 구글 로그인 에러 (서버 연결을 확인하세요)')),
+        SnackBar(content: Text('⚠️ $providerName 로그인 에러: ${e.runtimeType} $e')),
       );
     }
   }
 
-  void _showProviderSetupMessage(String provider) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('$provider 로그인은 앱 키와 SDK 설정 후 연결할 수 있습니다.')),
-    );
+  String _socialProviderName(String provider) {
+    switch (provider) {
+      case 'google':
+        return '구글';
+      case 'kakao':
+        return '카카오';
+      case 'naver':
+        return '네이버';
+      default:
+        return provider;
+    }
   }
 
   Future<void> _finishLogin({
@@ -194,6 +355,7 @@ class _LoginScreenState extends State<LoginScreen> {
     required String name,
     required String email,
     required String vehicleNumber,
+    String? accessToken,
   }) async {
     SharedData.vehicleNumber.value = vehicleNumber;
 
@@ -208,6 +370,11 @@ class _LoginScreenState extends State<LoginScreen> {
     await prefs.setString('userName', name);
     await prefs.setString('userEmail', email);
     await prefs.setString('userDept', '');
+    if (accessToken != null && accessToken.isNotEmpty) {
+      await prefs.setString('accessToken', accessToken);
+    } else {
+      await prefs.remove('accessToken');
+    }
 
     if (_isAutoLoginChecked) {
       await prefs.setBool('isLoggedIn', true);
@@ -404,7 +571,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   children: [
                     _buildSocialButton(
                       bgColor: const Color(0xFFFEE500),
-                      onTap: () => _showProviderSetupMessage('카카오'),
+                      onTap: _handleKakaoLogin,
                       child: Padding(
                         padding: const EdgeInsets.all(12.0),
                         child: Image.asset('assets/images/kakao.png'),
@@ -423,7 +590,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     const SizedBox(width: 24),
                     _buildSocialButton(
                       bgColor: const Color(0xFF03C75A),
-                      onTap: () => _showProviderSetupMessage('네이버'),
+                      onTap: _handleNaverLogin,
                       child: const Text(
                         'N',
                         style: TextStyle(

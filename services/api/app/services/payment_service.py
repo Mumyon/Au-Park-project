@@ -21,9 +21,9 @@ class PaymentService:
         vehicle_id = request.vehicle_id
         plate_number = request.plate_number
         paid_at = datetime.now(UTC)
-        exit_at = paid_at
+        exit_at = self._as_aware_utc(request.exit_at) or paid_at
         entry_at = self._as_aware_utc(request.entry_at) or exit_at - timedelta(hours=1)
-        duration_minutes = self._duration_minutes(entry_at, paid_at)
+        duration_minutes = request.duration_minutes or self._duration_minutes(entry_at, exit_at)
 
         if vehicle_id:
             vehicle = vehicle_service.get(vehicle_id)

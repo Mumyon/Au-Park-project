@@ -10,28 +10,39 @@ import 'features/parking/screens/main_navigation_screen.dart'; // 실제 경로�
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   final prefs = await SharedPreferences.getInstance();
-  final bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
+  final String savedUserId = prefs.getString('userId') ?? "";
+  final bool isLoggedIn =
+      (prefs.getBool('isLoggedIn') ?? false) && savedUserId.isNotEmpty;
 
   // 1. 저장된 차량 번호 복구
   if (isLoggedIn) {
-    SharedData.vehicleNumber.value = prefs.getString('registeredVehicle') ?? "등록된 차량 없음";
+    SharedData.vehicleNumber.value =
+        prefs.getString('registeredVehicle') ?? "등록된 차량 없음";
   }
 
-  // 2. 저장된 프로필 정보 복구 
-  final String savedUserId = prefs.getString('userId') ?? "";
+  // 2. 저장된 프로필 정보 복구
   final String savedName = prefs.getString('userName') ?? "병진";
-  final String savedEmail = prefs.getString('userEmail') ?? "byungjin@ansan.ac.kr";
+  final String savedEmail =
+      prefs.getString('userEmail') ?? "byungjin@ansan.ac.kr";
   final String savedDept = prefs.getString('userDept') ?? "인공지능소프트웨어과";
 
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => VehicleProvider()..loadForUser(savedUserId)),
+        ChangeNotifierProvider(
+          create: (_) => VehicleProvider()..loadForUser(savedUserId),
+        ),
         // 🔥 앱 시작과 동시에 복구된 유저 정보를 프로바이더에 꽂아줍니다!
         ChangeNotifierProvider(
-          create: (_) => UserProvider()..setUser(id: savedUserId, name: savedName, email: savedEmail, department: savedDept),
+          create: (_) => UserProvider()
+            ..setUser(
+              id: savedUserId,
+              name: savedName,
+              email: savedEmail,
+              department: savedDept,
+            ),
         ),
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
       ],
@@ -42,7 +53,7 @@ void main() async {
 
 class AuParkApp extends StatelessWidget {
   final bool isLoggedIn;
-  
+
   const AuParkApp({super.key, required this.isLoggedIn});
 
   @override
