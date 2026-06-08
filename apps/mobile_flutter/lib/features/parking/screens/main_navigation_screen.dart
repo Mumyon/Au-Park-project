@@ -88,10 +88,10 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
         selectedFontSize: 11,
         unselectedFontSize: 11,
         items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.menu), label: '전체 메뉴'),
+          BottomNavigationBarItem(icon: Icon(Icons.settings), label: '정보'),
           BottomNavigationBarItem(icon: Icon(Icons.bar_chart), label: '주차 현황'),
           BottomNavigationBarItem(icon: Icon(Icons.home_filled), label: '홈'),
-          BottomNavigationBarItem(icon: Icon(Icons.local_parking), label: '주차 정보'),
+          BottomNavigationBarItem(icon: Icon(Icons.car_rental), label: '주차 정보'),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: '마이페이지'),
         ],
       ),

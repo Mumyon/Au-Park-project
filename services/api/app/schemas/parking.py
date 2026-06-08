@@ -13,6 +13,11 @@ class SlotStatus(StrEnum):
     disabled = "disabled"
 
 
+class SlotType(StrEnum):
+    general = "general"
+    accessible = "accessible"
+
+
 class ParkingSessionStatus(StrEnum):
     active = "active"
     completed = "completed"
@@ -24,6 +29,7 @@ class ParkingSlot(BaseModel):
     label: str
     row: str | None = None
     column: int | None = None
+    slot_type: SlotType = SlotType.general
     status: SlotStatus = SlotStatus.empty
 
 
@@ -38,6 +44,15 @@ class ParkingLot(BaseModel):
 class ParkingStatusUpdateRequest(BaseModel):
     slot_id: str
     status: SlotStatus
+
+
+class ParkingStatusBulkUpdateItem(BaseModel):
+    slot_id: str
+    status: SlotStatus
+
+
+class ParkingStatusBulkUpdateRequest(BaseModel):
+    slots: list[ParkingStatusBulkUpdateItem] = Field(min_length=1)
 
 
 class ParkingEntryRequest(BaseModel):
@@ -60,6 +75,16 @@ class ParkingSession(BaseModel):
     exit_at: datetime | None = None
     status: ParkingSessionStatus = ParkingSessionStatus.active
     payment_id: str | None = None
+
+
+class ActiveParkingStatus(BaseModel):
+    session: ParkingSession
+    duration_minutes: int
+    base_fee: int
+    additional_fee: int
+    total_fee: int
+    prepaid_amount: int
+    outstanding_fee: int
 
 
 class LprParkingEventResult(BaseModel):

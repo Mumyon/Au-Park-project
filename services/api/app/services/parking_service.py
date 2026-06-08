@@ -4,6 +4,7 @@ from fastapi import HTTPException, status
 
 from app.schemas.log import EntryExitLog, EntryExitType
 from app.schemas.parking import (
+    ActiveParkingStatus,
     LprParkingEventResult,
     ParkingEntryRequest,
     ParkingExitRequest,
@@ -11,10 +12,12 @@ from app.schemas.parking import (
     ParkingSession,
     ParkingSessionStatus,
     ParkingSlot,
+    ParkingStatusBulkUpdateRequest,
     ParkingStatusUpdateRequest,
 )
 from app.schemas.payment import Payment, PaymentStatus
 from app.schemas.vehicle import Vehicle
+from app.services.parking_fee import calculate_parking_fee, calculate_parking_fee_breakdown
 from app.services.repository import InMemoryRepository, repository
 
 
@@ -38,6 +41,39 @@ class ParkingService:
         slots = [slot for slot in self.repo.parking_slots.values() if slot.lot_id == lot_id]
         return sorted(slots, key=lambda slot: (slot.row or "", slot.column or 0, slot.label))
 
+    def get_active_session(self, user_id: str) -> ParkingSession | None:
+        sessions = [
+            session
+            for session in self.repo.parking_sessions.values()
+            if session.user_id == user_id and session.status == ParkingSessionStatus.active
+        ]
+        return max(
+            sessions,
+            key=lambda session: self._as_aware_utc(session.entry_at),
+            default=None,
+        )
+
+    def get_active_status(self, user_id: str) -> ActiveParkingStatus | None:
+        session = self.get_active_session(user_id)
+        if session is None:
+            return None
+        now = datetime.now(UTC)
+        duration_minutes = self._duration_minutes(session.entry_at, now)
+        fee = calculate_parking_fee_breakdown(duration_minutes)
+        total_fee = fee["total_fee"]
+        prepaid_amount = sum(
+            payment.amount for payment in self._find_prepaid_payments(session)
+        )
+        return ActiveParkingStatus(
+            session=session,
+            duration_minutes=duration_minutes,
+            base_fee=fee["base_fee"],
+            additional_fee=fee["additional_fee"],
+            total_fee=total_fee,
+            prepaid_amount=prepaid_amount,
+            outstanding_fee=max(0, total_fee - prepaid_amount),
+        )
+
     def update_slot_status(self, lot_id: str, request: ParkingStatusUpdateRequest) -> ParkingSlot:
         self.get_lot(lot_id)
         slot = self.repo.parking_slots.get(request.slot_id)
@@ -48,6 +84,21 @@ class ParkingService:
         self.repo.parking_slots[slot.id] = updated
         self.repo.recalculate_lot_availability(lot_id)
         return updated
+
+    def update_slot_statuses(self, lot_id: str, request: ParkingStatusBulkUpdateRequest) -> list[ParkingSlot]:
+        self.get_lot(lot_id)
+        updated_slots: list[ParkingSlot] = []
+
+        for item in request.slots:
+            slot = self.repo.parking_slots.get(item.slot_id)
+            if slot is None or slot.lot_id != lot_id:
+                raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Parking slot not found: {item.slot_id}")
+            updated = slot.model_copy(update={"status": item.status})
+            self.repo.parking_slots[slot.id] = updated
+            updated_slots.append(updated)
+
+        self.repo.recalculate_lot_availability(lot_id)
+        return updated_slots
 
     def record_entry(self, request: ParkingEntryRequest) -> EntryExitLog:
         self.get_lot(request.lot_id)
@@ -106,6 +157,23 @@ class ParkingService:
             message="등록 회원 차량 입차가 자동 처리되었습니다.",
         )
 
+    def process_lpr_auto(self, request: ParkingEntryRequest) -> LprParkingEventResult:
+        plate_number = self._normalize_plate(request.plate_number)
+        active_session = self._find_active_session(request.lot_id, plate_number)
+        if active_session is not None:
+            return self.process_lpr_exit(
+                ParkingExitRequest(
+                    lot_id=request.lot_id,
+                    plate_number=plate_number,
+                )
+            )
+        return self.process_lpr_entry(
+            ParkingEntryRequest(
+                lot_id=request.lot_id,
+                plate_number=plate_number,
+            )
+        )
+
     def process_lpr_exit(self, request: ParkingExitRequest) -> LprParkingEventResult:
         self.get_lot(request.lot_id)
         plate_number = self._normalize_plate(request.plate_number)
@@ -131,8 +199,14 @@ class ParkingService:
             )
 
         exit_at = log.occurred_at
-        prepaid_payment = self._find_prepaid_payment(active_session)
-        if prepaid_payment is not None:
+        prepaid_payments = self._find_prepaid_payments(active_session)
+        if prepaid_payments:
+            prepaid_payment = max(
+                prepaid_payments,
+                key=lambda payment: self._as_aware_utc(payment.exit_at)
+                or datetime.min.replace(tzinfo=UTC),
+            )
+            prepaid_amount = sum(payment.amount for payment in prepaid_payments)
             prepaid_exit_at = self._as_aware_utc(prepaid_payment.exit_at)
             if prepaid_exit_at is not None and exit_at <= prepaid_exit_at:
                 completed_session = self._complete_session(active_session, exit_at, prepaid_payment.id)
@@ -146,12 +220,31 @@ class ParkingService:
 
             surcharge_start_at = prepaid_exit_at or active_session.entry_at
             surcharge_minutes = self._duration_minutes(surcharge_start_at, exit_at)
+            total_duration_minutes = self._duration_minutes(active_session.entry_at, exit_at)
+            surcharge_amount = max(
+                0,
+                calculate_parking_fee(total_duration_minutes) - prepaid_amount,
+            )
+            if surcharge_amount == 0:
+                completed_session = self._complete_session(
+                    active_session,
+                    exit_at,
+                    prepaid_payment.id,
+                )
+                return LprParkingEventResult(
+                    log=log,
+                    registered=True,
+                    session=completed_session,
+                    payment=prepaid_payment,
+                    message="사전 정산 후 추가 요금 없이 출차가 처리되었습니다.",
+                )
             payment = self._create_auto_payment(
                 session=active_session,
                 entry_at=surcharge_start_at,
                 exit_at=exit_at,
                 duration_minutes=surcharge_minutes,
                 description_suffix="사전 정산 초과 추가 결제",
+                amount_override=surcharge_amount,
             )
             completed_session = self._complete_session(active_session, exit_at, payment.id)
             return LprParkingEventResult(
@@ -202,8 +295,13 @@ class ParkingService:
         exit_at: datetime,
         duration_minutes: int,
         description_suffix: str,
+        amount_override: int | None = None,
     ) -> Payment:
-        amount = self._calculate_parking_fee(duration_minutes)
+        amount = (
+            amount_override
+            if amount_override is not None
+            else calculate_parking_fee(duration_minutes)
+        )
         paid_date = self._date_label(exit_at)
         payment = Payment(
             id=self.repo.next_id("payment"),
@@ -225,20 +323,15 @@ class ParkingService:
         self.repo.payments[payment.id] = payment
         return payment
 
-    def _find_prepaid_payment(self, session: ParkingSession) -> Payment | None:
+    def _find_prepaid_payments(self, session: ParkingSession) -> list[Payment]:
         normalized_plate = self._normalize_plate(session.plate_number)
-        candidates = [
+        return [
             payment
             for payment in self.repo.payments.values()
             if payment.status == PaymentStatus.paid
             and payment.user_id == session.user_id
             and self._payment_matches_session(payment, session, normalized_plate)
         ]
-        return max(
-            candidates,
-            key=lambda payment: self._as_aware_utc(payment.exit_at) or datetime.min.replace(tzinfo=UTC),
-            default=None,
-        )
 
     def _payment_matches_session(
         self,
@@ -309,13 +402,6 @@ class ParkingService:
         if value.tzinfo is None:
             return value.replace(tzinfo=UTC)
         return value.astimezone(UTC)
-
-    @staticmethod
-    def _calculate_parking_fee(duration_minutes: int) -> int:
-        if duration_minutes <= 30:
-            return 1000
-        extra_units = (duration_minutes - 30 + 9) // 10
-        return 1000 + extra_units * 500
 
     @staticmethod
     def _date_label(value: datetime) -> str:

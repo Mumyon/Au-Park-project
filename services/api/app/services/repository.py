@@ -7,7 +7,7 @@ from pydantic import BaseModel
 
 from app.core.config import settings
 from app.schemas.log import EntryExitLog, EntryExitType
-from app.schemas.parking import ParkingLot, ParkingSession, ParkingSlot, SlotStatus
+from app.schemas.parking import ParkingLot, ParkingSession, ParkingSlot, SlotStatus, SlotType
 from app.schemas.payment import Payment, PaymentMethodCreateRequest
 from app.schemas.user import User
 from app.schemas.vehicle import Vehicle
@@ -15,22 +15,40 @@ from app.schemas.vehicle import Vehicle
 ModelT = TypeVar("ModelT", bound=BaseModel)
 
 DEFAULT_LOT_ID = "lot-main"
-DEFAULT_SLOT_ROWS = ("A", "B")
-DEFAULT_SLOT_COLUMNS = range(1, 11)
+DEFAULT_LOT_NAME = "진리관 주차장"
+DEFAULT_LOT_ADDRESS = "진리관 주차 구역"
+DEFAULT_TOTAL_SLOTS = 42
+FRONT_ROW = "A"
+FRONT_ROW_COLUMNS = range(1, 24)
+FRONT_ROW_ACCESSIBLE_COLUMNS = {1, 2}
+CENTER_ROW = "B"
+CENTER_ROW_COLUMNS = range(1, 20)
 
 
 def default_parking_slots() -> list[ParkingSlot]:
-    return [
+    front_row_slots = [
         ParkingSlot(
-            id=f"{row}-{column:02d}",
+            id=f"{FRONT_ROW}-{column:02d}",
             lot_id=DEFAULT_LOT_ID,
-            label=f"{row}{column:02d}",
-            row=row,
+            label=f"{FRONT_ROW}{column}",
+            row=FRONT_ROW,
             column=column,
+            slot_type=SlotType.accessible if column in FRONT_ROW_ACCESSIBLE_COLUMNS else SlotType.general,
         )
-        for row in DEFAULT_SLOT_ROWS
-        for column in DEFAULT_SLOT_COLUMNS
+        for column in FRONT_ROW_COLUMNS
     ]
+    center_row_slots = [
+        ParkingSlot(
+            id=f"{CENTER_ROW}-{column:02d}",
+            lot_id=DEFAULT_LOT_ID,
+            label=f"{CENTER_ROW}{column}",
+            row=CENTER_ROW,
+            column=column,
+            slot_type=SlotType.general,
+        )
+        for column in CENTER_ROW_COLUMNS
+    ]
+    return front_row_slots + center_row_slots
 
 
 def next_id(prefix: str) -> str:
@@ -130,10 +148,10 @@ class InMemoryRepository:
         self.parking_lots: dict[str, ParkingLot] = {
             DEFAULT_LOT_ID: ParkingLot(
                 id=DEFAULT_LOT_ID,
-                name="Au-Park Main",
-                address="Demo parking lot",
-                total_slots=20,
-                available_slots=20,
+                name=DEFAULT_LOT_NAME,
+                address=DEFAULT_LOT_ADDRESS,
+                total_slots=DEFAULT_TOTAL_SLOTS,
+                available_slots=DEFAULT_TOTAL_SLOTS,
             )
         }
         self.parking_slots: dict[str, ParkingSlot] = {slot.id: slot for slot in default_parking_slots()}
@@ -219,17 +237,19 @@ class FirebaseRealtimeRepository(InMemoryRepository):
         if self.parking_lots.get(DEFAULT_LOT_ID) is None:
             self.parking_lots[DEFAULT_LOT_ID] = ParkingLot(
                 id=DEFAULT_LOT_ID,
-                name="Au-Park Main",
-                address="Demo parking lot",
-                total_slots=20,
-                available_slots=20,
+                name=DEFAULT_LOT_NAME,
+                address=DEFAULT_LOT_ADDRESS,
+                total_slots=DEFAULT_TOTAL_SLOTS,
+                available_slots=DEFAULT_TOTAL_SLOTS,
             )
         else:
             lot = self.parking_lots[DEFAULT_LOT_ID]
             self.parking_lots[DEFAULT_LOT_ID] = lot.model_copy(
                 update={
-                    "total_slots": 20,
-                    "available_slots": min(lot.available_slots, 20),
+                    "total_slots": DEFAULT_TOTAL_SLOTS,
+                    "available_slots": min(lot.available_slots, DEFAULT_TOTAL_SLOTS),
+                    "name": DEFAULT_LOT_NAME,
+                    "address": DEFAULT_LOT_ADDRESS,
                 }
             )
 
@@ -248,15 +268,16 @@ class FirebaseRealtimeRepository(InMemoryRepository):
                         "label": slot.label,
                         "row": slot.row,
                         "column": slot.column,
+                        "slot_type": slot.slot_type,
                     }
                 )
 
         self.parking_lots[DEFAULT_LOT_ID] = self.recalculate_lot_availability(DEFAULT_LOT_ID) or ParkingLot(
             id=DEFAULT_LOT_ID,
-            name="Au-Park Main",
-            address="Demo parking lot",
-            total_slots=20,
-            available_slots=20,
+            name=DEFAULT_LOT_NAME,
+            address=DEFAULT_LOT_ADDRESS,
+            total_slots=DEFAULT_TOTAL_SLOTS,
+            available_slots=DEFAULT_TOTAL_SLOTS,
         )
 
 

@@ -47,3 +47,16 @@ FastAPI 서버와 함께 테스트하려면 서버를 먼저 켠다.
 cd /Users/jobyeongik/Documents/GitHub/Au-Park-project/services/api
 .venv-conda/bin/python -m uvicorn app.main:app --host 127.0.0.1 --port 8000
 ```
+## Run Mobile App Through Cloudflare
+
+The helper script starts FastAPI when needed, creates a Cloudflare quick
+tunnel, detects its temporary HTTPS URL, and passes it to Flutter.
+
+```bash
+cd /Users/jobyeongik/Documents/GitHub/Au-Park-project
+./scripts/run_mobile_cloudflare.sh -d 00008110-0011743E2ED1801E
+```
+
+Keep the terminal running while the phone uses the app. A quick tunnel gets a
+new URL whenever it is restarted, so reinstall/re-run the app through this
+script after restarting the tunnel.

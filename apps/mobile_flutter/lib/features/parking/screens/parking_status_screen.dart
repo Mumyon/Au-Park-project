@@ -36,13 +36,18 @@ class _ParkingStatusScreenState extends State<ParkingStatusScreen> {
           final lotId = lot['id']?.toString();
           if (lotId == null) return MapEntry('', <Map<String, dynamic>>[]);
           final slots = await _apiClient.listParkingSlots(lotId);
-          return MapEntry(lotId, slots.whereType<Map<String, dynamic>>().toList());
+          return MapEntry(
+            lotId,
+            slots.whereType<Map<String, dynamic>>().toList(),
+          );
         }),
       );
       if (!mounted) return;
       setState(() {
         _lots = parsedLots;
-        _slotsByLot = Map.fromEntries(slotEntries.where((entry) => entry.key.isNotEmpty));
+        _slotsByLot = Map.fromEntries(
+          slotEntries.where((entry) => entry.key.isNotEmpty),
+        );
         _isLoading = false;
       });
     } on ApiException catch (error) {
@@ -69,40 +74,48 @@ class _ParkingStatusScreenState extends State<ParkingStatusScreen> {
       body: ListView(
         padding: const EdgeInsets.all(20),
         children: [
-          const Text('실시간 주차 현황', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+          const Text(
+            '실시간 주차 현황',
+            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+          ),
           const SizedBox(height: 12),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-                      Container(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
-          decoration: BoxDecoration(
-            border: Border.all(
-              color: Theme.of(context).dividerColor.withValues(alpha: 0.5),
-            ),
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(
-                Icons.event_seat,
-                size: 18,
-                color: Theme.of(context).textTheme.bodyMedium?.color,
-              ),
-              const SizedBox(width: 6),
-              Text(
-                '좌석 현황 보기',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Theme.of(context).textTheme.bodyMedium?.color,
-                  fontWeight: FontWeight.w500,
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 9,
+                ),
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: Theme.of(
+                      context,
+                    ).dividerColor.withValues(alpha: 0.5),
+                  ),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      Icons.event_seat,
+                      size: 18,
+                      color: Theme.of(context).textTheme.bodyMedium?.color,
+                    ),
+                    const SizedBox(width: 6),
+                    Text(
+                      '좌석 현황 보기',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Theme.of(context).textTheme.bodyMedium?.color,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
                 ),
               ),
-            ],
-          ),
-        ),
               IconButton(
                 tooltip: '새로고침',
                 icon: Icon(Icons.refresh, color: theme.primaryColor, size: 22),
@@ -130,7 +143,12 @@ class _ParkingStatusScreenState extends State<ParkingStatusScreen> {
           else if (_errorMessage != null)
             Padding(
               padding: const EdgeInsets.only(top: 80),
-              child: Center(child: Text(_errorMessage!, style: const TextStyle(color: Colors.redAccent))),
+              child: Center(
+                child: Text(
+                  _errorMessage!,
+                  style: const TextStyle(color: Colors.redAccent),
+                ),
+              ),
             )
           else if (_lots.isEmpty)
             const Padding(
@@ -140,10 +158,17 @@ class _ParkingStatusScreenState extends State<ParkingStatusScreen> {
           else
             ..._lots.map((lot) {
               final lotId = lot['id']?.toString();
-              final slots = lotId == null ? <Map<String, dynamic>>[] : _slotsByLot[lotId] ?? [];
-              final total = slots.isEmpty ? (lot['total_slots'] as int? ?? 0) : slots.length;
+              final slots = lotId == null
+                  ? <Map<String, dynamic>>[]
+                  : _slotsByLot[lotId] ?? [];
+              final total = slots.isEmpty
+                  ? (lot['total_slots'] as int? ?? 0)
+                  : slots.length;
               final occupied = slots.isEmpty
-                  ? ((total - (lot['available_slots'] as int? ?? 0)).clamp(0, total)).toInt()
+                  ? ((total - (lot['available_slots'] as int? ?? 0)).clamp(
+                      0,
+                      total,
+                    )).toInt()
                   : slots.where(_isOccupiedSlot).length;
               final available = slots.isEmpty
                   ? (lot['available_slots'] as int? ?? 0)
@@ -151,14 +176,14 @@ class _ParkingStatusScreenState extends State<ParkingStatusScreen> {
               final color = available == 0
                   ? Colors.red
                   : available <= (total * 0.3)
-                      ? Colors.orange
-                      : Colors.green;
+                  ? Colors.orange
+                  : Colors.green;
               return Padding(
                 padding: const EdgeInsets.only(bottom: 16),
                 child: _buildParkingCard(
                   context,
                   lot,
-                  lot['name'] ?? lot['id'] ?? '주차장',
+                  _parkingLotDisplayName(lot),
                   occupied,
                   total == 0 ? 1 : total,
                   color,
@@ -170,7 +195,22 @@ class _ParkingStatusScreenState extends State<ParkingStatusScreen> {
     );
   }
 
-  Widget _buildParkingCard(BuildContext context, Map<String, dynamic> lot, String name, int cur, int max, Color color) {
+  String _parkingLotDisplayName(Map<String, dynamic> lot) {
+    final lotId = lot['id']?.toString();
+    if (lotId == 'lot-main') {
+      return '진리관 주차장';
+    }
+    return lot['name']?.toString() ?? lotId ?? '주차장';
+  }
+
+  Widget _buildParkingCard(
+    BuildContext context,
+    Map<String, dynamic> lot,
+    String name,
+    int cur,
+    int max,
+    Color color,
+  ) {
     final cardColor = Theme.of(context).cardColor;
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
@@ -189,29 +229,59 @@ class _ParkingStatusScreenState extends State<ParkingStatusScreen> {
                 color: Colors.black.withValues(alpha: isDarkMode ? 0.2 : 0.02),
                 blurRadius: 10,
                 offset: const Offset(0, 4),
-              )
+              ),
             ],
           ),
           child: Row(
             children: [
-              Container(width: 5, height: 45, decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(2))),
+              Container(
+                width: 5,
+                height: 45,
+                decoration: BoxDecoration(
+                  color: color,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
               const SizedBox(width: 20),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 17)),
+                    Text(
+                      name,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 17,
+                      ),
+                    ),
                     const SizedBox(height: 4),
-                    Text('현재 $cur대 / 총 $max대', style: const TextStyle(color: Colors.grey, fontSize: 13)),
+                    Text(
+                      '현재 $cur대 / 총 $max대',
+                      style: const TextStyle(color: Colors.grey, fontSize: 13),
+                    ),
                   ],
                 ),
               ),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  Text('${((cur / max) * 100).toInt()}%', style: TextStyle(color: color, fontWeight: FontWeight.bold, fontSize: 18)),
+                  Text(
+                    '${((cur / max) * 100).toInt()}%',
+                    style: TextStyle(
+                      color: color,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
+                    ),
+                  ),
                   const SizedBox(height: 4),
-                  Text('좌석 보기', style: TextStyle(color: Theme.of(context).primaryColor, fontSize: 12, fontWeight: FontWeight.w600)),
+                  Text(
+                    '좌석 보기',
+                    style: TextStyle(
+                      color: Theme.of(context).primaryColor,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
                 ],
               ),
             ],
@@ -225,16 +295,15 @@ class _ParkingStatusScreenState extends State<ParkingStatusScreen> {
     final lotId = lot['id']?.toString();
     if (lotId == null) return;
 
-    final lotName = lot['name']?.toString() ?? lotId;
-    final slotsFuture = _apiClient.listParkingSlots(lotId).then(
-      (slots) => slots.whereType<Map<String, dynamic>>().toList(),
-    );
+    final slotsFuture = _apiClient
+        .listParkingSlots(lotId)
+        .then((slots) => slots.whereType<Map<String, dynamic>>().toList());
 
     await showDialog<void>(
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text('$lotName 좌석 현황'),
+          title: const Text('진리관 주차 구역 현황'),
           content: SizedBox(
             width: double.maxFinite,
             child: FutureBuilder<List<Map<String, dynamic>>>(
@@ -250,7 +319,12 @@ class _ParkingStatusScreenState extends State<ParkingStatusScreen> {
                 if (snapshot.hasError) {
                   return const SizedBox(
                     height: 160,
-                    child: Center(child: Text('좌석 정보를 불러오지 못했습니다.', style: TextStyle(color: Colors.redAccent))),
+                    child: Center(
+                      child: Text(
+                        '좌석 정보를 불러오지 못했습니다.',
+                        style: TextStyle(color: Colors.redAccent),
+                      ),
+                    ),
                   );
                 }
 
@@ -267,11 +341,12 @@ class _ParkingStatusScreenState extends State<ParkingStatusScreen> {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('사용 가능 $available면 · 총 ${slots.length}면', style: const TextStyle(fontSize: 13, color: Colors.grey)),
+                    Text(
+                      '사용 가능 $available면 · 총 ${slots.length}면',
+                      style: const TextStyle(fontSize: 13, color: Colors.grey),
+                    ),
                     const SizedBox(height: 14),
-                    _buildEntranceLine(context),
-                    const SizedBox(height: 14),
-                    ..._groupSlotsByRow(slots).entries.map((entry) => _buildSeatRow(entry.key, entry.value)),
+                    _buildSeatRows(context, _groupSlotsByRow(slots)),
                     const SizedBox(height: 14),
                     _buildLegend(),
                   ],
@@ -292,81 +367,138 @@ class _ParkingStatusScreenState extends State<ParkingStatusScreen> {
 
   Widget _buildEntranceLine(BuildContext context) {
     return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.symmetric(vertical: 8),
+      width: 36,
+      height: 38,
+      padding: const EdgeInsets.symmetric(vertical: 6),
       decoration: BoxDecoration(
         color: Theme.of(context).primaryColor.withValues(alpha: 0.08),
         borderRadius: BorderRadius.circular(4),
       ),
       alignment: Alignment.center,
-      child: const Text('입구', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+      child: const Text(
+        '입구',
+        style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
+      ),
     );
   }
 
-  Widget _buildSeatRow(String row, List<Map<String, dynamic>> rowSlots) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 10),
-      child: Row(
-        children: [
-          SizedBox(
-            width: 22,
-            child: Text(row, style: const TextStyle(fontWeight: FontWeight.bold)),
-          ),
-          const SizedBox(width: 8),
-          Expanded(
-            child: GridView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 10,
-                mainAxisSpacing: 6,
-                crossAxisSpacing: 6,
-                childAspectRatio: 0.86,
-              ),
-              itemCount: rowSlots.length,
-              itemBuilder: (context, index) => _buildSeatTile(rowSlots[index]),
+  Widget _buildSeatRows(
+    BuildContext context,
+    Map<String, List<Map<String, dynamic>>> groupedSlots,
+  ) {
+    final entries = groupedSlots.entries.toList();
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Column(
+          children: entries
+              .map(
+                (entry) => Container(
+                  width: 22,
+                  height: 38,
+                  margin: const EdgeInsets.only(bottom: 8),
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    entry.key,
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ),
+              )
+              .toList(),
+        ),
+        const SizedBox(width: 8),
+        Expanded(
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: entries
+                  .map(
+                    (entry) => Padding(
+                      padding: const EdgeInsets.only(bottom: 8),
+                      child: _buildScrollableSeatRow(
+                        context,
+                        entry.key,
+                        entry.value,
+                      ),
+                    ),
+                  )
+                  .toList(),
             ),
           ),
-        ],
-      ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildScrollableSeatRow(
+    BuildContext context,
+    String row,
+    List<Map<String, dynamic>> rowSlots,
+  ) {
+    return Row(
+      children: [
+        ...rowSlots.map(
+          (slot) => Padding(
+            padding: const EdgeInsets.only(right: 5),
+            child: _buildSeatTile(slot),
+          ),
+        ),
+        if (row == 'A') _buildEntranceLine(context),
+      ],
     );
   }
 
   Widget _buildSeatTile(Map<String, dynamic> slot) {
     final status = slot['status']?.toString() ?? 'empty';
     final label = slot['label']?.toString() ?? slot['id']?.toString() ?? '';
+    final slotType = slot['slot_type']?.toString() ?? 'general';
     final isEmpty = status == 'empty';
     final isDisabled = status == 'disabled';
+    final isAccessible = slotType == 'accessible';
     final color = isDisabled
         ? Colors.grey.shade400
+        : isEmpty && isAccessible
+        ? Colors.blue
         : isEmpty
-            ? Colors.green
-            : Colors.redAccent;
-    final textColor = isEmpty || status == 'occupied' ? Colors.white : Colors.grey.shade800;
+        ? Colors.green
+        : Colors.redAccent;
+    final textColor = isEmpty || status == 'occupied'
+        ? Colors.white
+        : Colors.grey.shade800;
 
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 180),
-      alignment: Alignment.center,
-      decoration: BoxDecoration(
-        color: color,
-        borderRadius: BorderRadius.circular(6),
-      ),
-      child: Text(
-        label.replaceAll(RegExp(r'[^A-Z0-9]'), ''),
-        style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: textColor),
-        maxLines: 1,
+    return SizedBox(
+      width: 32,
+      height: 38,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 180),
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          color: color,
+          borderRadius: BorderRadius.circular(6),
+        ),
+        child: Text(
+          _formatSlotLabel(label),
+          style: TextStyle(
+            fontSize: 9,
+            fontWeight: FontWeight.bold,
+            color: textColor,
+          ),
+          maxLines: 1,
+        ),
       ),
     );
   }
 
   Widget _buildLegend() {
-    return Row(
+    return Wrap(
+      spacing: 14,
+      runSpacing: 8,
       children: [
         _buildLegendItem(Colors.green, '가능'),
-        const SizedBox(width: 14),
         _buildLegendItem(Colors.redAccent, '사용 중'),
-        const SizedBox(width: 14),
         _buildLegendItem(Colors.grey.shade400, '불가'),
+        _buildLegendItem(Colors.blue, '장애인 전용'),
       ],
     );
   }
@@ -375,14 +507,23 @@ class _ParkingStatusScreenState extends State<ParkingStatusScreen> {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Container(width: 10, height: 10, decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(2))),
+        Container(
+          width: 10,
+          height: 10,
+          decoration: BoxDecoration(
+            color: color,
+            borderRadius: BorderRadius.circular(2),
+          ),
+        ),
         const SizedBox(width: 5),
         Text(label, style: const TextStyle(fontSize: 12, color: Colors.grey)),
       ],
     );
   }
 
-  Map<String, List<Map<String, dynamic>>> _groupSlotsByRow(List<Map<String, dynamic>> slots) {
+  Map<String, List<Map<String, dynamic>>> _groupSlotsByRow(
+    List<Map<String, dynamic>> slots,
+  ) {
     final grouped = <String, List<Map<String, dynamic>>>{};
     for (final slot in slots) {
       final row = slot['row']?.toString() ?? _rowFromLabel(slot);
@@ -393,7 +534,9 @@ class _ParkingStatusScreenState extends State<ParkingStatusScreen> {
       rowSlots.sort((a, b) => _slotColumn(a).compareTo(_slotColumn(b)));
     }
 
-    return Map.fromEntries(grouped.entries.toList()..sort((a, b) => a.key.compareTo(b.key)));
+    return Map.fromEntries(
+      grouped.entries.toList()..sort((a, b) => a.key.compareTo(b.key)),
+    );
   }
 
   String _rowFromLabel(Map<String, dynamic> slot) {
@@ -407,6 +550,13 @@ class _ParkingStatusScreenState extends State<ParkingStatusScreen> {
     final label = slot['label']?.toString() ?? slot['id']?.toString() ?? '';
     final match = RegExp(r'\d+').firstMatch(label);
     return int.tryParse(match?.group(0) ?? '') ?? 0;
+  }
+
+  String _formatSlotLabel(String label) {
+    final normalized = label.replaceAll(RegExp(r'[^A-Z0-9]'), '');
+    final match = RegExp(r'^([A-Z]+)0*(\d+)$').firstMatch(normalized);
+    if (match == null) return normalized;
+    return '${match.group(1)}${match.group(2)}';
   }
 
   bool _isEmptySlot(Map<String, dynamic> slot) {

@@ -1,7 +1,9 @@
 from datetime import UTC, datetime, timedelta
 
 from app.schemas.payment import Payment, PaymentMethodCreateRequest, PaymentRequest, PaymentStatus
+from app.schemas.parking import ParkingSessionStatus
 from app.services.auth_service import auth_service
+from app.services.parking_fee import calculate_parking_fee
 from app.services.repository import InMemoryRepository, repository
 from app.services.vehicle_service import vehicle_service
 
@@ -24,6 +26,7 @@ class PaymentService:
         exit_at = self._as_aware_utc(request.exit_at) or paid_at
         entry_at = self._as_aware_utc(request.entry_at) or exit_at - timedelta(hours=1)
         duration_minutes = request.duration_minutes or self._duration_minutes(entry_at, exit_at)
+        amount = request.amount
 
         if vehicle_id:
             vehicle = vehicle_service.get(vehicle_id)
@@ -39,6 +42,32 @@ class PaymentService:
             )
             vehicle_id = matched_vehicle.id if matched_vehicle else None
 
+        active_session = next(
+            (
+                session
+                for session in self.repo.parking_sessions.values()
+                if session.user_id == request.user_id
+                and session.status == ParkingSessionStatus.active
+                and (
+                    (vehicle_id and session.vehicle_id == vehicle_id)
+                    or (plate_number and session.plate_number == plate_number)
+                )
+            ),
+            None,
+        )
+        if active_session is not None:
+            duration_minutes = self._duration_minutes(active_session.entry_at, exit_at)
+            entry_at = self._as_aware_utc(active_session.entry_at) or entry_at
+            total_fee = calculate_parking_fee(duration_minutes)
+            already_paid = sum(
+                payment.amount
+                for payment in self.repo.payments.values()
+                if payment.status == PaymentStatus.paid
+                and payment.user_id == request.user_id
+                and self._payment_matches_session(payment, active_session)
+            )
+            amount = max(0, total_fee - already_paid)
+
         paid_date = self._date_label(paid_at)
         description = request.description
         if not description or description == "Parking fee":
@@ -49,7 +78,7 @@ class PaymentService:
             user_id=request.user_id,
             vehicle_id=vehicle_id,
             plate_number=plate_number,
-            amount=request.amount,
+            amount=amount,
             description=description,
             status=PaymentStatus.paid,
             lot_id=request.lot_id,
@@ -105,6 +134,18 @@ class PaymentService:
         if updated != payment:
             self.repo.payments[updated.id] = updated
         return updated
+
+    def _payment_matches_session(self, payment: Payment, session) -> bool:
+        payment_exit_at = self._as_aware_utc(payment.exit_at)
+        if payment_exit_at is None or payment_exit_at < self._as_aware_utc(session.entry_at):
+            return False
+        if payment.lot_id and payment.lot_id != session.lot_id:
+            return False
+        if payment.vehicle_id and payment.vehicle_id != session.vehicle_id:
+            return False
+        if payment.plate_number and payment.plate_number != session.plate_number:
+            return False
+        return bool(payment.vehicle_id or payment.plate_number)
 
     @staticmethod
     def _as_aware_utc(value: datetime | None) -> datetime | None:

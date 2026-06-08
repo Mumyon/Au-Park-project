@@ -24,10 +24,9 @@ class ApiClient {
     if (_configuredBaseUrl.isNotEmpty) {
       return _configuredBaseUrl;
     }
-    if (Platform.isAndroid) {
-      return 'http://10.0.2.2:8000/api/v1';
-    }
-    return 'http://100.100.107.250:8000/api/v1';
+    return Platform.isAndroid
+        ? 'http://10.0.2.2:8000/api/v1'
+        : 'http://127.0.0.1:8000/api/v1';
   }
 
   final http.Client _client;
@@ -98,6 +97,26 @@ class ApiClient {
 
   Future<List<dynamic>> listParkingSlots(String lotId) {
     return getJsonList('/parking/lots/$lotId/slots');
+  }
+
+  Future<Map<String, dynamic>?> getActiveParkingSession(String userId) async {
+    final encodedUserId = Uri.encodeQueryComponent(userId);
+    final response = await _send(
+      () => _client.get(
+        Uri.parse('$baseUrl/parking/sessions/active?user_id=$encodedUserId'),
+      ),
+    );
+    if (response.statusCode >= 200 && response.statusCode < 300) {
+      final decoded = jsonDecode(response.body);
+      if (decoded == null) {
+        return null;
+      }
+      if (decoded is Map<String, dynamic>) {
+        return decoded;
+      }
+      throw ApiException('Unexpected API response');
+    }
+    throw _errorFromResponse(response);
   }
 
   Future<Map<String, dynamic>> requestPayment({

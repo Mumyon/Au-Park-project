@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Au-Park Project Overview</title>
+  <style>
+    :root {
+      --ink: #17202a;
+      --muted: #5f6c7b;
+      --line: #dde4ec;
+      --surface: #ffffff;
+      --soft: #f5f7fa;
+      --brand: #0b4f8a;
+      --brand-2: #159a82;
+      --warn: #9a6b00;
+      --code: #102033;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: #eef2f6;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.65;
+    }
+
+    header {
+      padding: 48px 28px 34px;
+      color: #fff;
+      background: linear-gradient(135deg, #083b68, #0b4f8a 58%, #159a82);
+    }
+
+    header .wrap,
+    main {
+      max-width: 1180px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(32px, 5vw, 54px);
+      letter-spacing: 0;
+      line-height: 1.1;
+    }
+
+    h2 {
+      margin: 0 0 18px;
+      font-size: 26px;
+      line-height: 1.2;
+      letter-spacing: 0;
+    }
+
+    h3 {
+      margin: 22px 0 10px;
+      font-size: 18px;
+      letter-spacing: 0;
+    }
+
+    p {
+      margin: 0 0 14px;
+    }
+
+    .subtitle {
+      max-width: 760px;
+      margin-top: 14px;
+      color: rgba(255, 255, 255, 0.86);
+      font-size: 17px;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 24px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 30px;
+      padding: 5px 11px;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.12);
+      color: #fff;
+      font-size: 13px;
+    }
+
+    main {
+      padding: 28px;
+    }
+
+    section {
+      margin: 0 0 22px;
+      padding: 26px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--surface);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 16px;
+    }
+
+    .span-4 {
+      grid-column: span 4;
+    }
+
+    .span-6 {
+      grid-column: span 6;
+    }
+
+    .span-8 {
+      grid-column: span 8;
+    }
+
+    .span-12 {
+      grid-column: span 12;
+    }
+
+    .box {
+      min-height: 100%;
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--soft);
+    }
+
+    .box h3 {
+      margin-top: 0;
+    }
+
+    .muted {
+      color: var(--muted);
+    }
+
+    .tag-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .tag {
+      padding: 4px 9px;
+      border-radius: 999px;
+      background: #e4eef8;
+      color: #0b4f8a;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    th,
+    td {
+      padding: 12px 13px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+      font-size: 14px;
+    }
+
+    th {
+      background: #edf3f9;
+      color: #203040;
+      font-weight: 800;
+    }
+
+    tr:last-child td {
+      border-bottom: 0;
+    }
+
+    code {
+      padding: 2px 5px;
+      border-radius: 4px;
+      background: #e8edf3;
+      color: var(--code);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 0.92em;
+    }
+
+    pre {
+      margin: 12px 0 0;
+      padding: 15px;
+      overflow-x: auto;
+      border-radius: 8px;
+      background: #0f1b2a;
+      color: #eaf2ff;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    ul,
+    ol {
+      margin: 8px 0 0 20px;
+      padding: 0;
+    }
+
+    li {
+      margin: 6px 0;
+    }
+
+    .flow {
+      display: grid;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .flow-step {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfcfe;
+    }
+
+    .num {
+      display: inline-flex;
+      flex: 0 0 28px;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--brand);
+      color: #fff;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .notice {
+      padding: 14px;
+      border-left: 4px solid var(--warn);
+      border-radius: 6px;
+      background: #fff8e6;
+    }
+
+    .ok {
+      border-left-color: var(--brand-2);
+      background: #edf9f6;
+    }
+
+    footer {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 0 28px 36px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    @media (max-width: 860px) {
+      main,
+      header {
+        padding-left: 18px;
+        padding-right: 18px;
+      }
+
+      section {
+        padding: 20px;
+      }
+
+      .span-4,
+      .span-6,
+      .span-8,
+      .span-12 {
+        grid-column: span 12;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <h1>Au-Park Project Overview</h1>
+      <p class="subtitle">
+        Au-Park는 Flutter 모바일 앱, FastAPI 백엔드, OpenCV 기반 비전 워커를 연결해
+        차량 등록, 소셜 로그인, 번호판 인식 입출차, 사전정산, 자동정산, 주차 현황을 처리하는 스마트 주차 시스템입니다.
+      </p>
+      <div class="meta">
+        <span class="pill">작성일: 2026-06-09</span>
+        <span class="pill">Repository: Au-Park-project</span>
+        <span class="pill">Mobile + API + Vision Worker</span>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section>
+      <h2>1. 프로젝트 한눈에 보기</h2>
+      <div class="grid">
+        <div class="box span-4">
+          <h3>Flutter 모바일 앱</h3>
+          <p class="muted">
+            사용자 로그인, 소셜 로그인, 차량 등록, 결제수단 등록, 홈 현황판, 주차 현황, 주차 내역 화면을 담당합니다.
+          </p>
+          <div class="tag-list">
+            <span class="tag">Flutter</span>
+            <span class="tag">Dart</span>
+            <span class="tag">Provider</span>
+            <span class="tag">http</span>
+          </div>
+        </div>
+        <div class="box span-4">
+          <h3>FastAPI 서버</h3>
+          <p class="muted">
+            인증, 사용자, 차량, 결제, 주차 세션, LPR 입출차, 요금 정책, Firebase 저장소 연동을 처리합니다.
+          </p>
+          <div class="tag-list">
+            <span class="tag">FastAPI</span>
+            <span class="tag">Pydantic</span>
+            <span class="tag">Firebase RTDB</span>
+            <span class="tag">Uvicorn</span>
+          </div>
+        </div>
+        <div class="box span-4">
+          <h3>Vision Worker</h3>
+          <p class="muted">
+            iPhone Continuity Camera 또는 RTSP/IP 카메라 영상을 읽고, 번호판 OCR과 주차면 감지를 서버 이벤트로 전송합니다.
+          </p>
+          <div class="tag-list">
+            <span class="tag">OpenCV</span>
+            <span class="tag">EasyOCR</span>
+            <span class="tag">NumPy</span>
+            <span class="tag">Cloudflare Tunnel</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>2. 디렉터리 구조</h2>
+      <pre><code>Au-Park-project/
+├── apps/
+│   ├── mobile_flutter/          Flutter iOS/Android 앱
+│   └── admin_dashboard/         관리자 대시보드 예정 영역
+├── services/
+│   ├── api/                     FastAPI 백엔드 서버
+│   │   ├── app/
+│   │   │   ├── api/             auth, users, vehicles, parking, payments, logs, lpr 라우터
+│   │   │   ├── core/            환경 설정
+│   │   │   ├── schemas/         Pydantic 요청/응답 모델
+│   │   │   └── services/        비즈니스 로직 및 저장소
+│   │   └── tests/               API 테스트
+│   └── vision_worker/           OpenCV/EasyOCR 기반 카메라 워커
+│       ├── vision_worker/       camera, plate, occupancy, ocr, api_client
+│       └── config.local.yaml    로컬 카메라/API 설정
+├── scripts/
+│   └── run_mobile_cloudflare.sh Cloudflare Tunnel + Flutter 릴리스 실행 헬퍼
+└── project_overview.html        현재 문서</code></pre>
+    </section>
+
+    <section>
+      <h2>3. 개발 스택</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>영역</th>
+            <th>기술</th>
+            <th>역할</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>모바일 앱</td>
+            <td>Flutter, Dart, Provider, SharedPreferences, http</td>
+            <td>사용자 화면, 상태 관리, API 통신, 로컬 사용자 정보 보관</td>
+          </tr>
+          <tr>
+            <td>소셜 인증</td>
+            <td>google_sign_in, Kakao Flutter SDK, flutter_naver_login</td>
+            <td>Google ID Token, Kakao/Naver Access Token 획득 후 서버 검증</td>
+          </tr>
+          <tr>
+            <td>백엔드</td>
+            <td>FastAPI, Uvicorn, Pydantic Settings, httpx</td>
+            <td>REST API, 인증, 주차 세션, 결제, LPR 이벤트 처리</td>
+          </tr>
+          <tr>
+            <td>데이터 저장소</td>
+            <td>Firebase Realtime Database, InMemory Repository</td>
+            <td>운영/테스트 데이터 저장. 환경변수 없을 때는 인메모리 저장소 사용</td>
+          </tr>
+          <tr>
+            <td>비전 처리</td>
+            <td>OpenCV, EasyOCR, NumPy, PyYAML</td>
+            <td>카메라 프레임 수집, 번호판 후보 검출, OCR, 주차면 상태 감지</td>
+          </tr>
+          <tr>
+            <td>무선 테스트</td>
+            <td>Cloudflare Tunnel</td>
+            <td>MacBook의 로컬 FastAPI 서버를 HTTPS 공개 주소로 노출</td>
+          </tr>
+          <tr>
+            <td>결제</td>
+            <td>iamport_flutter, 서버 결제 내역 모델</td>
+            <td>결제수단 등록 화면, 사전정산/자동정산 결제 내역 생성</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>4. 전체 아키텍처</h2>
+      <div class="flow">
+        <div class="flow-step">
+          <span class="num">1</span>
+          <div>
+            <strong>Flutter 앱</strong>
+            <p class="muted">사용자가 로그인, 차량 등록, 결제수단 등록을 수행합니다. 앱은 <code>ApiClient</code>를 통해 FastAPI와 통신합니다.</p>
+          </div>
+        </div>
+        <div class="flow-step">
+          <span class="num">2</span>
+          <div>
+            <strong>FastAPI 서버</strong>
+            <p class="muted">사용자, 차량, 결제수단, 주차 세션, 결제 내역을 Firebase 또는 인메모리 저장소에 기록합니다.</p>
+          </div>
+        </div>
+        <div class="flow-step">
+          <span class="num">3</span>
+          <div>
+            <strong>Vision Worker</strong>
+            <p class="muted">iPhone Continuity Camera 또는 RTSP/IP 카메라에서 프레임을 읽고 번호판을 OCR로 인식합니다.</p>
+          </div>
+        </div>
+        <div class="flow-step">
+          <span class="num">4</span>
+          <div>
+            <strong>LPR 자동 입출차</strong>
+            <p class="muted"><code>/api/v1/lpr/auto</code>는 활성 주차 세션이 없으면 입차, 있으면 출차로 처리합니다.</p>
+          </div>
+        </div>
+        <div class="flow-step">
+          <span class="num">5</span>
+          <div>
+            <strong>홈 현황판 갱신</strong>
+            <p class="muted">앱 홈 화면은 <code>/api/v1/parking/sessions/active</code>를 주기적으로 조회해 차량번호, 입차시간, 기본요금, 추가요금, 정산완료, 미정산 금액을 표시합니다.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>5. 주요 기능</h2>
+      <div class="grid">
+        <div class="box span-6">
+          <h3>인증 및 사용자</h3>
+          <ul>
+            <li>이메일 로그인/회원가입</li>
+            <li>Google, Kakao, Naver 소셜 로그인</li>
+            <li>서버에서 소셜 토큰 검증 후 Au-Park 사용자 생성/조회</li>
+          </ul>
+        </div>
+        <div class="box span-6">
+          <h3>차량 및 결제수단</h3>
+          <ul>
+            <li>사용자별 차량번호 등록</li>
+            <li>결제수단 등록 화면</li>
+            <li>사전정산, 자동 출차 정산, 추가요금 정산 내역 저장</li>
+          </ul>
+        </div>
+        <div class="box span-6">
+          <h3>LPR 입출차</h3>
+          <ul>
+            <li>번호판 인식 후 서버로 <code>lot_id</code>, <code>plate_number</code> 전송</li>
+            <li><code>auto</code> 모드에서 입차/출차 자동 판정</li>
+            <li>카메라 가림 또는 번호판 이탈 후 재인식 준비 로그 출력</li>
+          </ul>
+        </div>
+        <div class="box span-6">
+          <h3>주차 현황 및 요금</h3>
+          <ul>
+            <li>홈 화면 활성 주차 세션 표시</li>
+            <li>기본요금과 추가요금 분리 표시</li>
+            <li>사전정산 후 미정산 금액 차감 및 출차 시 차액 자동 결제</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>6. 요금 정책</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>구간</th>
+            <th>요금</th>
+            <th>비고</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>입차 후 30분 이내</td>
+            <td>0원</td>
+            <td>무료 출차</td>
+          </tr>
+          <tr>
+            <td>31분~60분</td>
+            <td>기본요금 1,500원</td>
+            <td>현황판에 기본요금으로 유지 표시</td>
+          </tr>
+          <tr>
+            <td>61분부터</td>
+            <td>10분마다 500원</td>
+            <td>현황판에 추가요금으로 누적 표시</td>
+          </tr>
+          <tr>
+            <td>일일 최대</td>
+            <td>15,000원</td>
+            <td>여러 날이면 일 단위 최대요금을 합산</td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="notice ok">
+        사전정산 후에는 <strong>정산 완료 금액</strong>이 올라가고 <strong>현재 미정산 금액</strong>이 내려갑니다.
+        출차 시에는 총요금에서 이미 정산한 금액을 뺀 차액만 결제합니다.
+      </p>
+    </section>
+
+    <section>
+      <h2>7. FastAPI 서버 사용법</h2>
+      <h3>서버 실행</h3>
+      <pre><code>cd /Users/jobyeongik/Documents/GitHub/Au-Park-project/services/api
+.venv-conda/bin/python -m uvicorn app.main:app --host 127.0.0.1 --port 8000</code></pre>
+
+      <h3>상태 확인</h3>
+      <pre><code>curl http://127.0.0.1:8000/health</code></pre>
+
+      <h3>API 문서</h3>
+      <pre><code>http://127.0.0.1:8000/docs</code></pre>
+
+      <h3>환경 변수</h3>
+      <pre><code>FIREBASE_DATABASE_URL=https://your-project-id-default-rtdb.firebaseio.com
+FIREBASE_CREDENTIALS_PATH=/Users/jobyeongik/Downloads/firebase-service-account.json
+GOOGLE_OAUTH_CLIENT_IDS=google-ios-client-id.apps.googleusercontent.com,google-android-client-id.apps.googleusercontent.com
+PORTONE_API_SECRET=your-portone-secret</code></pre>
+      <p class="muted">환경변수가 없으면 테스트/데모용 인메모리 저장소로 동작합니다.</p>
+    </section>
+
+    <section>
+      <h2>8. Flutter 앱 사용법</h2>
+      <h3>로컬 시뮬레이터 실행</h3>
+      <pre><code>cd /Users/jobyeongik/Documents/GitHub/Au-Park-project/apps/mobile_flutter
+flutter run</code></pre>
+
+      <h3>실제 iPhone 릴리스 실행</h3>
+      <pre><code>cd /Users/jobyeongik/Documents/GitHub/Au-Park-project/apps/mobile_flutter
+flutter run --release \
+  -d 00008110-0011743E2ED1801E \
+  --dart-define=API_BASE_URL=https://YOUR-TUNNEL.trycloudflare.com/api/v1</code></pre>
+
+      <h3>Cloudflare 자동 실행 스크립트</h3>
+      <pre><code>cd /Users/jobyeongik/Documents/GitHub/Au-Park-project
+./scripts/run_mobile_cloudflare.sh -d 00008110-0011743E2ED1801E</code></pre>
+
+      <p class="notice">
+        실제 iPhone에서 <code>127.0.0.1</code>은 MacBook이 아니라 iPhone 자기 자신입니다.
+        무선 테스트는 Cloudflare Tunnel URL 또는 같은 네트워크의 MacBook IP를 <code>API_BASE_URL</code>로 넘겨야 합니다.
+      </p>
+    </section>
+
+    <section>
+      <h2>9. Vision Worker 사용법</h2>
+      <h3>설치</h3>
+      <pre><code>cd /Users/jobyeongik/Documents/GitHub/Au-Park-project/services/vision_worker
+python3 -m venv .venv
+.venv/bin/pip install -r requirements-ocr.txt</code></pre>
+
+      <h3>카메라 인덱스 확인</h3>
+      <pre><code>.venv/bin/python main.py scan-cameras --max-index 10</code></pre>
+
+      <h3>스냅샷 저장</h3>
+      <pre><code>.venv/bin/python main.py snapshot --source 0 --output data/plate_test.jpg</code></pre>
+
+      <h3>번호판 OCR 이미지 테스트</h3>
+      <pre><code>export SSL_CERT_FILE="$(.venv/bin/python -c 'import certifi; print(certifi.where())')"
+.venv/bin/python main.py test-plate-image --config config.local.yaml --image data/plate_test.jpg</code></pre>
+
+      <h3>실시간 번호판 인식</h3>
+      <pre><code>export SSL_CERT_FILE="$(.venv/bin/python -c 'import certifi; print(certifi.where())')"
+.venv/bin/python main.py plate --config config.local.yaml</code></pre>
+
+      <h3>주차면 점유 감지</h3>
+      <pre><code>.venv/bin/python main.py calibrate-occupancy --config config.local.yaml
+.venv/bin/python main.py occupancy --config config.local.yaml</code></pre>
+
+      <p class="muted">
+        현재 번호판 인식은 OpenCV 후보 영역 검출과 EasyOCR을 사용합니다. 더 안정적인 운영 환경에서는 YOLO/ONNX 기반 번호판 검출기로 교체할 수 있습니다.
+      </p>
+    </section>
+
+    <section>
+      <h2>10. API 그룹</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>그룹</th>
+            <th>주요 엔드포인트</th>
+            <th>역할</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>auth</td>
+            <td><code>/api/v1/auth/signup</code>, <code>/api/v1/auth/login</code>, <code>/api/v1/auth/social-login</code></td>
+            <td>이메일/소셜 인증</td>
+          </tr>
+          <tr>
+            <td>users</td>
+            <td><code>/api/v1/users/{user_id}</code></td>
+            <td>사용자 조회 및 프로필</td>
+          </tr>
+          <tr>
+            <td>vehicles</td>
+            <td><code>/api/v1/vehicles?user_id=...</code></td>
+            <td>차량 등록/조회/삭제</td>
+          </tr>
+          <tr>
+            <td>parking</td>
+            <td><code>/api/v1/parking/lots</code>, <code>/api/v1/parking/sessions/active</code></td>
+            <td>주차장, 주차면, 활성 주차 세션, 요금 현황</td>
+          </tr>
+          <tr>
+            <td>payments</td>
+            <td><code>/api/v1/payments/request</code>, <code>/api/v1/payments/methods</code></td>
+            <td>사전정산, 자동정산 내역, 결제수단 등록</td>
+          </tr>
+          <tr>
+            <td>lpr</td>
+            <td><code>/api/v1/lpr/auto</code>, <code>/api/v1/lpr/entry</code>, <code>/api/v1/lpr/exit</code></td>
+            <td>번호판 인식 이벤트를 입출차 로직으로 연결</td>
+          </tr>
+          <tr>
+            <td>logs</td>
+            <td><code>/api/v1/logs</code></td>
+            <td>입출차 로그 조회</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>11. 핵심 파일</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>파일</th>
+            <th>설명</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>apps/mobile_flutter/lib/core/api/api_client.dart</code></td>
+            <td>Flutter 앱의 FastAPI 통신 클라이언트입니다.</td>
+          </tr>
+          <tr>
+            <td><code>apps/mobile_flutter/lib/features/parking/screens/home_screen.dart</code></td>
+            <td>활성 주차 세션, 기본요금, 추가요금, 정산완료, 미정산 금액을 표시하는 홈 현황판입니다.</td>
+          </tr>
+          <tr>
+            <td><code>services/api/app/services/parking_service.py</code></td>
+            <td>LPR 입차/출차, 활성 주차 세션, 사전정산 차감, 자동정산을 처리합니다.</td>
+          </tr>
+          <tr>
+            <td><code>services/api/app/services/parking_fee.py</code></td>
+            <td>30분 무료, 기본요금, 추가요금, 일일 최대요금 정책을 계산합니다.</td>
+          </tr>
+          <tr>
+            <td><code>services/api/app/services/repository.py</code></td>
+            <td>Firebase Realtime Database 또는 InMemory 저장소를 추상화합니다.</td>
+          </tr>
+          <tr>
+            <td><code>services/vision_worker/vision_worker/plate.py</code></td>
+            <td>번호판 후보 검출, OCR, 중복 방지, auto 재무장 로직을 담당합니다.</td>
+          </tr>
+          <tr>
+            <td><code>services/vision_worker/config.local.yaml</code></td>
+            <td>카메라 source, LPR role, 프레임 간격, 반복 확인 횟수, ROI, OCR 설정을 관리합니다.</td>
+          </tr>
+          <tr>
+            <td><code>scripts/run_mobile_cloudflare.sh</code></td>
+            <td>FastAPI, Cloudflare Quick Tunnel, Flutter 릴리스 실행을 한 번에 연결합니다.</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>12. 운영 및 테스트 체크리스트</h2>
+      <div class="grid">
+        <div class="box span-6">
+          <h3>실제 iPhone 앱 테스트</h3>
+          <ol>
+            <li>FastAPI 서버 실행</li>
+            <li>Cloudflare Tunnel 실행 또는 자동 스크립트 사용</li>
+            <li>Flutter release 앱 설치</li>
+            <li>회원가입/로그인</li>
+            <li>차량번호와 결제수단 등록</li>
+            <li>Vision Worker 실행 후 번호판 인식</li>
+          </ol>
+        </div>
+        <div class="box span-6">
+          <h3>LPR auto 테스트</h3>
+          <ol>
+            <li>번호판을 보여주면 입차 처리</li>
+            <li>카메라를 손으로 막거나 번호판 없는 곳으로 이동</li>
+            <li><code>LPR auto mode rearmed</code> 로그 확인</li>
+            <li>번호판을 다시 보여주면 출차 처리</li>
+            <li>남은 미정산 금액만 자동 결제</li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>13. 현재 한계와 다음 단계</h2>
+      <ul>
+        <li>Cloudflare Quick Tunnel은 재시작할 때 주소가 바뀌므로 장기 운영에는 named tunnel 또는 Cloud Run 같은 배포가 더 적합합니다.</li>
+        <li>현재 자동결제는 서버 결제 내역 생성 중심입니다. 실제 카드 승인/출금을 위해서는 PortOne 빌링키 결제 API 호출을 서버에 연결해야 합니다.</li>
+        <li>EasyOCR 기반 번호판 인식은 테스트에 적합하지만, 운영 정확도를 높이려면 번호판 전용 YOLO/ONNX 검출 모델 도입이 좋습니다.</li>
+        <li>주차면 감지는 빈 주차장 기준 이미지 방식이 가능하며, 야외 환경에서는 YOLO 차량 검출 + 주차면 ROI 교차 판정 방식이 더 안정적입니다.</li>
+        <li>관리자 대시보드는 <code>apps/admin_dashboard</code>에 자리만 마련되어 있으며 추후 구현 대상입니다.</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer>
+    <p>Generated for Au-Park-project. Open this file directly in a browser to review the project structure and usage guide.</p>
+  </footer>
+</body>
+</html>
